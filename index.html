@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="pl" data-season="lato">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Café Zakrzówek ☼ kawiarnia z widokiem · ul. Wyłom 22, Kraków</title>
+  <meta name="description" content="Café Zakrzówek – kawiarnia z widokiem na zalew Zakrzówek w Krakowie. Kawa na wynos na spacer, drożdżówki, croissanty, matcha i sala na przyjęcia. ul. Wyłom 22, codziennie 9–19.">
+  <meta name="theme-color" content="#f2eee6">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Café Zakrzówek ☼ kawiarnia z widokiem">
+  <meta property="og:description" content="Na spacerze nad Zakrzówkiem? Wpadnij na kawę z widokiem. ul. Wyłom 22, Kraków.">
+  <meta property="og:image" content="assets/img/drozdzowka-taras.jpg">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <!-- Sezon ustawiany przed renderem, żeby nie mignął zły motyw -->
+  <script>
+    (function () {
+      var valid = ['wiosna', 'lato', 'jesien', 'zima'];
+      var q = new URLSearchParams(location.search).get('sezon');
+      var saved = null;
+      try { saved = sessionStorage.getItem('cz-season'); } catch (e) {}
+      var m = new Date().getMonth() + 1;
+      var auto = m >= 3 && m <= 5 ? 'wiosna' : m >= 6 && m <= 8 ? 'lato' : m >= 9 && m <= 11 ? 'jesien' : 'zima';
+      var s = valid.indexOf(q) > -1 ? q : valid.indexOf(saved) > -1 ? saved : auto;
+      document.documentElement.setAttribute('data-season', s);
+      document.documentElement.classList.add('js');
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Jost:wght@500;600;700&family=Lora:ital,wght@0,400;0,500;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CafeOrCoffeeShop",
+    "name": "Café Zakrzówek",
+    "description": "Kawiarnia z widokiem na zalew Zakrzówek",
+    "image": "assets/img/drozdzowka-taras.jpg",
+    "telephone": "+48 795 455 233",
+    "email": "cafe.zakrzowek@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "ul. Wyłom 22",
+      "postalCode": "30-364",
+      "addressLocality": "Kraków",
+      "addressCountry": "PL"
+    },
+    "geo": { "@type": "GeoCoordinates", "latitude": 50.0350478, "longitude": 19.9130438 },
+    "openingHoursSpecification": [{
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "09:00",
+      "closes": "19:00"
+    }],
+    "sameAs": [
+      "https://www.instagram.com/cafe.zakrzowek/",
+      "https://www.facebook.com/profile.php?id=61556314341629"
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- Sprite: promienie słońca z logo + ikony -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="rays" viewBox="0 80 600 260">
+        <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round">
+          <path d="M200.0 330.0L15.0 330.0" pathLength="1"/>
+          <path d="M203.4 304.1L131.0 284.7" pathLength="1"/>
+          <path d="M206.4 282.3L71.0 213.3" pathLength="1"/>
+          <path d="M218.5 259.1L155.9 204.7" pathLength="1"/>
+          <path d="M239.6 240.5L179.2 150.9" pathLength="1"/>
+          <path d="M259.9 230.8L203.4 90.8" pathLength="1"/>
+          <path d="M281.6 225.6L271.9 170.5" pathLength="1"/>
+          <path d="M312.8 225.8L324.5 130.5" pathLength="1"/>
+          <path d="M337.6 232.0L390.3 94.7" pathLength="1"/>
+          <path d="M357.2 238.4L393.8 179.9" pathLength="1"/>
+          <path d="M380.4 255.0L455.0 185.4" pathLength="1"/>
+          <path d="M395.4 279.3L515.4 215.4" pathLength="1"/>
+          <path d="M398.5 299.9L445.4 285.6" pathLength="1"/>
+          <path d="M400.0 330.0L585.0 330.0" pathLength="1"/>
+        </g>
+      </symbol>
+      <symbol id="i-wiosna" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="2.2"/><path d="M12 7.8c-1.6-3.2 1.6-4.6 0-5.3-1.6.7 1.6 2.1 0 5.3zM14.2 10c3.2-1.6 4.6 1.6 5.3 0-.7-1.6-2.1 1.6-5.3 0zM12 12.2c1.6 3.2-1.6 4.6 0 5.3 1.6-.7-1.6-2.1 0-5.3zM9.8 10c-3.2 1.6-4.6-1.6-5.3 0 .7 1.6 2.1-1.6 5.3 0z"/><path d="M12 17.5V22M12 20c-1.5-1.6-3.3-1.8-4.5-1.4M12 20.5c1.5-1.6 3.3-1.8 4.5-1.4"/></g></symbol>
+      <symbol id="i-lato" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></g></symbol>
+      <symbol id="i-jesien" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C4 11 9 5 19 4c.6 9.5-5 15-14 15z"/><path d="M5 19c3-5 6-8 10-10.5M3 21l2-2"/></g></symbol>
+      <symbol id="i-zima" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2.5v19M3.8 7.25l16.4 9.5M3.8 16.75l16.4-9.5"/><path d="M9.5 3.8 12 6l2.5-2.2M9.5 20.2 12 18l2.5 2.2M3.5 10.2l3.2-1-.7-3.3M20.5 13.8l-3.2 1 .7 3.3M6 18.1l.7-3.3-3.2-1M18 5.9l-.7 3.3 3.2 1"/></g></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></g></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M5 3.5h3.2l1.6 4.2-2 1.3a10.5 10.5 0 0 0 5.2 5.2l1.3-2 4.2 1.6V17a3 3 0 0 1-3 3A15.5 15.5 0 0 1 2 6.5a3 3 0 0 1 3-3z"/></symbol>
+      <symbol id="i-cup" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.3 13a1.5 1.5 0 0 1-1.5 1.3H8.8a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M5 7h14V5.2A1.2 1.2 0 0 0 17.8 4H6.2A1.2 1.2 0 0 0 5 5.2zM7 11h10"/></g></symbol>
+      <symbol id="i-walk" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="1.8"/><path d="m9 21 2.5-6.5L14 17v4M7 12l2.5-4.5h3.5l2 3.5 3 1.5M11.5 14.5l1-5"/></g></symbol>
+      <symbol id="i-ig" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></g></symbol>
+      <symbol id="i-fb" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M14 21v-7.5h2.6l.4-3H14V8.6c0-.9.3-1.5 1.6-1.5H17V4.4A20 20 0 0 0 14.8 4C12.6 4 11 5.4 11 7.9v2.6H8.5v3H11V21"/></symbol>
+      <symbol id="logo" viewBox="0 80 600 340">
+        <use href="#rays" x="0" y="80" width="600" height="260" class="logo-rays"/>
+        <text x="300" y="333" text-anchor="middle" class="logo-cafe">cafe</text>
+        <text x="300" y="408" text-anchor="middle" class="logo-name" textLength="476" lengthAdjust="spacingAndGlyphs">ZAKRZÓWEK</text>
+      </symbol>
+    </defs>
+  </svg>
+
+  <a class="skip" href="#main">Przejdź do treści</a>
+  <div class="progress" aria-hidden="true"><span></span></div>
+
+  <header class="site-header" id="top">
+    <div class="wrap header-inner">
+      <a href="#top" class="brand" aria-label="Café Zakrzówek – strona główna">
+        <svg class="logo" viewBox="0 80 600 340" role="img" aria-hidden="true"><use href="#logo"/></svg>
+      </a>
+
+      <nav class="nav" id="nav" aria-label="Główna nawigacja">
+        <a href="#spacer">Na spacer</a>
+        <a href="#sezon">Sezonowo</a>
+        <a href="#menu">Menu</a>
+        <a href="#przyjecia">Przyjęcia</a>
+        <a href="#kontakt">Dojazd</a>
+      </nav>
+
+      <div class="season-switch" role="group" aria-label="Wersja sezonowa strony">
+        <button type="button" data-season-btn="wiosna" aria-label="Wiosna"><svg><use href="#i-wiosna"/></svg></button>
+        <button type="button" data-season-btn="lato" aria-label="Lato"><svg><use href="#i-lato"/></svg></button>
+        <button type="button" data-season-btn="jesien" aria-label="Jesień"><svg><use href="#i-jesien"/></svg></button>
+        <button type="button" data-season-btn="zima" aria-label="Zima"><svg><use href="#i-zima"/></svg></button>
+      </div>
+
+      <button class="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <canvas class="particles" aria-hidden="true"></canvas>
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow hero-in" style="--d:0">
+            <span class="status" data-open-status><i></i><span>Sprawdzam godziny…</span></span>
+          </p>
+          <p class="kicker hero-in" style="--d:1" data-s="eyebrow">Sezon na lato</p>
+          <h1 id="hero-title" class="hero-title">
+            <span class="line hero-in" style="--d:2" data-s="title1">Lato</span>
+            <span class="line hero-in" style="--d:3" data-s="title2">nad zalewem</span>
+            <em class="line hero-in" style="--d:4" data-s="titleItalic">kawiarnia z widokiem</em>
+          </h1>
+          <p class="lead hero-in" style="--d:5" data-s="lead">Drożdżówka, słońce i widok, który zatrzymuje lato na dłużej.</p>
+          <div class="cta-row hero-in" style="--d:6">
+            <a class="btn btn-primary" data-directions href="https://www.google.com/maps/dir/?api=1&amp;destination=50.0350478,19.9130438&amp;travelmode=walking" target="_blank" rel="noopener">
+              <svg><use href="#i-walk"/></svg> Prowadź do nas
+            </a>
+            <a class="btn btn-ghost" href="#sezon">Co dziś w witrynie?</a>
+          </div>
+          <p class="address hero-in" style="--d:7"><svg><use href="#i-pin"/></svg> ul. Wyłom 22, Kraków · tuż nad Zakrzówkiem</p>
+        </div>
+
+        <div class="hero-visual">
+          <svg class="hero-rays" aria-hidden="true" data-rays><use href="#rays"/></svg>
+          <figure class="arch" data-parallax="-0.08">
+            <img data-s-img="heroMain" src="assets/img/frugoo-matcha.jpg" alt="" width="480" height="640" fetchpriority="high">
+          </figure>
+          <figure class="polaroid" data-parallax="0.12">
+            <img data-s-img="heroSecond" src="assets/img/poziomianki-widok.jpg" alt="" width="480" height="640">
+          </figure>
+          <svg class="badge" viewBox="0 0 200 200" aria-hidden="true" data-spin>
+            <defs><path id="badge-circle" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0"/></defs>
+            <circle cx="100" cy="100" r="96" class="badge-bg"/>
+            <text><textPath href="#badge-circle" textLength="458" lengthAdjust="spacing" data-s="badge">kawa na wynos ☼ kawa na wynos ☼ kawa na wynos ☼ </textPath></text>
+            <use href="#i-cup" x="72" y="72" width="56" height="56" class="badge-icon"/>
+          </svg>
+        </div>
+      </div>
+      <a href="#spacer" class="scroll-hint" aria-label="Przewiń dalej"><span></span></a>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" data-marquee></div>
+    </div>
+
+    <!-- SPACER -->
+    <section class="walker" id="spacer" aria-labelledby="walker-title">
+      <div class="wrap walker-grid">
+        <div class="walker-copy">
+          <p class="kicker" data-reveal>Jesteś na spacerze?</p>
+          <h2 id="walker-title" class="h2" data-split data-s="walkerTitle">Zrób przystanek na kawę z widokiem.</h2>
+          <p class="body" data-reveal data-s="walkerLead">Jesteśmy przy ul. Wyłom 22, tuż przy ścieżkach wokół zalewu. Wpadnij na chwilę – albo na dłużej.</p>
+
+          <ol class="steps">
+            <li data-reveal="left" style="--i:0">
+              <span class="step-no">01</span>
+              <div><h3>Zejdź na chwilę ze ścieżki</h3><p>Kawiarnia jest tuż nad Zakrzówkiem – bez nadkładania drogi.</p></div>
+            </li>
+            <li data-reveal="left" style="--i:1">
+              <span class="step-no">02</span>
+              <div><h3>Weź kawę na wynos</h3><p>W naszym kubku z logo, do tego drożdżówka albo croissant z witryny.</p></div>
+            </li>
+            <li data-reveal="left" style="--i:2">
+              <span class="step-no">03</span>
+              <div><h3>…albo zostań na widoku</h3><p>Usiądź przy stoliku i popatrz na turkusową wodę i zieleń wokół zalewu.</p></div>
+            </li>
+          </ol>
+
+          <div class="distance" data-reveal>
+            <button class="btn btn-primary" type="button" data-locate><svg><use href="#i-walk"/></svg> Ile mam do was?</button>
+            <p class="distance-out" data-distance aria-live="polite">Sprawdzimy, jak daleko jesteś (lokalizacja nie jest nigdzie zapisywana).</p>
+          </div>
+        </div>
+
+        <div class="walker-visual" data-trail>
+          <svg class="trail" viewBox="0 0 400 560" aria-hidden="true">
+            <path class="trail-bg" d="M40 520 C 120 470, 40 400, 120 350 S 300 320, 260 240 S 120 160, 210 100 S 330 70, 340 50"/>
+            <path class="trail-line" d="M40 520 C 120 470, 40 400, 120 350 S 300 320, 260 240 S 120 160, 210 100 S 330 70, 340 50" pathLength="1"/>
+          </svg>
+          <span class="trail-start"><svg><use href="#i-walk"/></svg></span>
+          <span class="trail-end"><svg><use href="#i-cup"/></svg></span>
+          <figure class="walker-photo" data-reveal="clip">
+            <img data-s-img="walkerImg" src="assets/img/kawa-na-wynos-wiosna.jpg" alt="" width="498" height="640" loading="lazy">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEZONOWE -->
+    <section class="seasonal" id="sezon" aria-labelledby="seasonal-title">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="kicker" data-reveal data-s="seasonKicker">Oferta sezonowa</p>
+          <h2 id="seasonal-title" class="h2" data-split data-s="seasonTitle">Teraz u nas</h2>
+          <p class="body" data-reveal data-s="seasonLead"></p>
+        </header>
+        <div class="cards" data-highlights></div>
+      </div>
+    </section>
+
+    <!-- GALERIA POZIOMA -->
+    <section class="gallery" aria-labelledby="gallery-title" data-hscroll>
+      <div class="gallery-sticky">
+        <div class="wrap gallery-head">
+          <p class="kicker">Widok, który zatrzymuje</p>
+          <h2 id="gallery-title" class="h2">Z naszego Instagrama</h2>
+        </div>
+        <div class="gallery-track" data-hscroll-track>
+          <figure class="g-item"><img src="assets/img/drozdzowka-taras.jpg" alt="Drożdżówki z kruszonką i owocami na drewnianej desce na tle drzew" width="480" height="640" loading="lazy"><figcaption>Drożdżówka, słońce i widok, który zatrzymuje lato na dłużej ✨</figcaption></figure>
+          <figure class="g-item"><img src="assets/img/frugoo-matcha.jpg" alt="Matcha wlewana do szklanki z lemoniadą, w tle zalew Zakrzówek" width="480" height="640" loading="lazy"><figcaption>Frugoo Matcha – lemoniada marakuja i matcha na upalne dni</figcaption></figure>
+          <figure class="g-item g-wide"><img src="assets/img/gry-planszowe.jpg" alt="Partia szachów przy kawie i matcha latte" width="640" height="478" loading="lazy"><figcaption>Przestrzeń do rozrywki i odpoczynku</figcaption></figure>
+          <figure class="g-item"><img src="assets/img/poziomianki-widok.jpg" alt="Drożdżówki z truskawkami na tle turkusowego zalewu Zakrzówek" width="480" height="640" loading="lazy"><figcaption>Poziomianki – edycja mocno limitowana</figcaption></figure>
+          <figure class="g-item"><img src="assets/img/baristki.jpg" alt="Baristki Café Zakrzówek z kawą i gazetą" width="480" height="640" loading="lazy"><figcaption>Kawa, gazetka i nasze świetne baristki</figcaption></figure>
+          <figure class="g-item g-wide"><img src="assets/img/croissanty.jpg" alt="Croissanty wytrawne z warzywami na drewnianej desce" width="640" height="640" loading="lazy"><figcaption>Croissanty wytrawne – codziennie w witrynie</figcaption></figure>
+          <figure class="g-item"><img src="assets/img/malinianki-pistacjowe.jpg" alt="Malinianki z kremem pistacjowym na tle zalewu" width="480" height="640" loading="lazy"><figcaption>Malinianki z kremem pistacjowym</figcaption></figure>
+          <a class="g-item g-cta" href="https://www.instagram.com/cafe.zakrzowek/" target="_blank" rel="noopener">
+            <svg><use href="#i-ig"/></svg>
+            <span>@cafe.zakrzowek</span>
+            <small>więcej na Instagramie →</small>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENU -->
+    <section class="menu" id="menu" aria-labelledby="menu-title">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="kicker" data-reveal>Karta</p>
+          <h2 id="menu-title" class="h2" data-split>Co podajemy</h2>
+          <p class="body" data-reveal>Witryna zmienia się codziennie – zawsze znajdziesz w niej coś innego. Niektóre pozycje chętnie podgrzejemy.</p>
+        </header>
+
+        <div class="tabs" role="tablist" aria-label="Kategorie menu" data-tabs data-reveal></div>
+        <div class="tab-panels" data-panels></div>
+      </div>
+    </section>
+
+    <!-- PRZESTRZEŃ -->
+    <section class="space" aria-labelledby="space-title">
+      <div class="wrap space-grid">
+        <figure class="space-photo" data-reveal="clip">
+          <img src="assets/img/gry-planszowe.jpg" alt="Goście grający w szachy przy kawie" width="640" height="478" loading="lazy">
+        </figure>
+        <div>
+          <p class="kicker" data-reveal>Nie tylko na chwilę</p>
+          <h2 id="space-title" class="h2" data-split>Przestrzeń do rozrywki i odpoczynku</h2>
+          <ul class="ticks">
+            <li data-reveal="left" style="--i:0">Gry planszowe i szachy na miejscu</li>
+            <li data-reveal="left" style="--i:1">Gazety i magazyny do kawy</li>
+            <li data-reveal="left" style="--i:2">Duże okna i widok na zieleń wokół zalewu</li>
+            <li data-reveal="left" style="--i:3">Stoliki w środku i na zewnątrz</li>
+            <li data-reveal="left" style="--i:4">Klimatyczne miejsce na sesję zdjęciową</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRZYJĘCIA -->
+    <section class="events" id="przyjecia" aria-labelledby="events-title">
+      <div class="wrap events-grid">
+        <div class="events-copy">
+          <p class="kicker" data-reveal>Przyjęcia i wydarzenia</p>
+          <h2 id="events-title" class="h2" data-split>Zaplanuj swoje wydarzenie u nas</h2>
+          <p class="body" data-reveal>Duża, klimatyczna sala z pięknym widokiem. Organizujemy:</p>
+          <ul class="chips" data-reveal>
+            <li>urodziny i imieniny</li>
+            <li>spotkania biznesowe</li>
+            <li>konferencje i warsztaty</li>
+            <li>baby shower</li>
+            <li>ceremonie zaślubin</li>
+            <li data-s="eventsExtra">imprezy firmowe</li>
+          </ul>
+          <p class="body" data-reveal>Organizujemy też spotkania z gośćmi – np. wieczory podróżnicze. Śledź nasz Instagram, żeby nie przegapić kolejnego.</p>
+          <div class="cta-row" data-reveal>
+            <a class="btn btn-primary" href="tel:+48795455233"><svg><use href="#i-phone"/></svg> 795 455 233</a>
+            <a class="btn btn-ghost" href="mailto:cafe.zakrzowek@gmail.com?subject=Rezerwacja%20sali">cafe.zakrzowek@gmail.com</a>
+          </div>
+        </div>
+        <div class="events-visual">
+          <figure class="ev-main" data-reveal="clip" data-parallax="-0.05">
+            <img src="assets/img/sala-eventowa.jpg" alt="Sala przygotowana na przyjęcie, z białymi obrusami i widokiem przez duże okna" width="481" height="640" loading="lazy">
+          </figure>
+          <figure class="ev-side" data-reveal="scale" data-parallax="0.1">
+            <img src="assets/img/spotkanie-podroznicze.jpg" alt="Plakat spotkania podróżniczego z Ludwikiem Pisarskim w Café Zakrzówek" width="480" height="640" loading="lazy">
+            <figcaption>Było u nas: spotkanie podróżnicze</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- KONTAKT -->
+    <section class="visit" id="kontakt" aria-labelledby="visit-title">
+      <svg class="sunrise" aria-hidden="true" data-sunrise><use href="#rays"/></svg>
+      <div class="wrap visit-grid">
+        <div class="visit-copy">
+          <p class="kicker" data-reveal>Dojazd i godziny</p>
+          <h2 id="visit-title" class="h2" data-split>Wpadnij do nas</h2>
+          <dl class="facts">
+            <div data-reveal style="--i:0"><dt>Adres</dt><dd>ul. Wyłom 22<br>30-364 Kraków (Dębniki)</dd></div>
+            <div data-reveal style="--i:1"><dt>Otwarte</dt><dd>codziennie <span data-hours>9:00–19:00</span><br><span class="status" data-open-status><i></i><span></span></span></dd></div>
+            <div data-reveal style="--i:2"><dt>Telefon</dt><dd><a href="tel:+48795455233">795 455 233</a></dd></div>
+            <div data-reveal style="--i:3"><dt>E-mail</dt><dd><a href="mailto:cafe.zakrzowek@gmail.com">cafe.zakrzowek@gmail.com</a></dd></div>
+          </dl>
+          <div class="cta-row" data-reveal>
+            <a class="btn btn-primary" data-directions href="https://www.google.com/maps/dir/?api=1&amp;destination=50.0350478,19.9130438&amp;travelmode=walking" target="_blank" rel="noopener"><svg><use href="#i-walk"/></svg> Wyznacz trasę pieszo</a>
+            <a class="btn btn-ghost icon-only" href="https://www.instagram.com/cafe.zakrzowek/" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-ig"/></svg></a>
+            <a class="btn btn-ghost icon-only" href="https://www.facebook.com/profile.php?id=61556314341629" target="_blank" rel="noopener" aria-label="Facebook"><svg><use href="#i-fb"/></svg></a>
+          </div>
+        </div>
+        <div class="map" data-reveal="scale">
+          <iframe title="Mapa dojazdu do Café Zakrzówek" src="https://www.google.com/maps?q=Caf%C3%A9+Zakrz%C3%B3wek,+Wy%C5%82om+22,+Krak%C3%B3w&amp;z=15&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <svg class="logo logo-footer" viewBox="0 80 600 340" role="img" aria-label="Café Zakrzówek"><use href="#logo"/></svg>
+      <p><em>kawiarnia z widokiem</em> · ul. Wyłom 22, Kraków</p>
+      <p class="small">© <span data-year>2026</span> Café Zakrzówek ☼</p>
+    </div>
+  </footer>
+
+  <!-- Pasek akcji na telefonie – dla spacerowiczów -->
+  <nav class="action-bar" aria-label="Szybkie akcje">
+    <span class="status compact" data-open-status><i></i><span></span></span>
+    <a href="https://www.google.com/maps/dir/?api=1&amp;destination=50.0350478,19.9130438&amp;travelmode=walking" data-directions target="_blank" rel="noopener"><svg><use href="#i-walk"/></svg> Prowadź</a>
+    <a href="tel:+48795455233"><svg><use href="#i-phone"/></svg> Zadzwoń</a>
+  </nav>
+
+  <script src="js/seasons.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

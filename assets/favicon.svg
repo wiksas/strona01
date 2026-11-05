@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#efebe4"/>
+  <g stroke="#c2a57a" stroke-width="3" stroke-linecap="round">
+    <path d="M18 40H6M19 33 9 27M23 27l-7-9M29 24 26 12M35 24l3-12M41 27l7-9M45 33l10-6M46 40h12"/>
+  </g>
+  <text x="32" y="56" text-anchor="middle" font-family="Jost, Futura, Arial, sans-serif" font-weight="700" font-size="22" fill="#1c1a17">Z</text>
+</svg>
