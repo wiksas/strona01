@@ -62,11 +62,11 @@
       long = soon ? `Otwarte jeszcze do ${fmtHour(close)} – zdążysz!` : `Otwarte teraz · do ${fmtHour(close)}`;
       short = `Otwarte<br>do ${fmtHour(close)}`;
     } else if (now < open * 60) {
-      long = `Zamknięte · otwieramy o ${fmtHour(open)}`;
-      short = `Otwieramy<br>o ${fmtHour(open)}`;
+      long = `Zamknięte · otwarcie dziś o ${fmtHour(open)}`;
+      short = `Zamknięte<br>otwarcie dziś ${fmtHour(open)}`;
     } else {
-      long = `Zamknięte · jutro od ${fmtHour(open)}`;
-      short = `Jutro<br>od ${fmtHour(open)}`;
+      long = `Zamknięte · otwarcie jutro o ${fmtHour(open)}`;
+      short = `Zamknięte<br>otwarcie jutro ${fmtHour(open)}`;
     }
     $$('[data-open-status]').forEach((el) => {
       el.classList.toggle('is-open', isOpen);
