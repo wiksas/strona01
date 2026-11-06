@@ -1,4 +1,5 @@
-/* Café Zakrzówek – sezony, animacje scrolla, status otwarcia, odległość dla spacerowiczów */
+/* Café Zakrzówek – sezony, pojawianie się treści, galeria z podglądem, menu, status otwarcia, odległość pieszo.
+   Animacje zależne od przewijania są w CSS (animation-timeline); tutaj tylko IntersectionObserver. */
 (() => {
   'use strict';
 
@@ -8,12 +9,17 @@
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = () => matchMedia('(max-width: 760px)').matches;
+  const behavior = reduceMotion ? 'auto' : 'smooth';
   const IMG = 'assets/img/';
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+  const imgAttrs = (name, sizes) => {
+    const [w, h] = C.images[name];
+    return `src="${IMG}${name}.webp" srcset="${IMG}${name}-320.webp 320w, ${IMG}${name}.webp ${w}w" sizes="${sizes}" width="${w}" height="${h}"`;
+  };
+
   /* ---------------------------------------------------------------
-     Reveal on scroll
+     Pojawianie się przy przewijaniu
      --------------------------------------------------------------- */
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
@@ -41,7 +47,6 @@
   /* ---------------------------------------------------------------
      Status otwarcia (czas Warszawy)
      --------------------------------------------------------------- */
-  const pad = (n) => String(n).padStart(2, '0');
   const fmtHour = (h) => `${h}:00`;
 
   function warsawMinutes() {
@@ -73,11 +78,11 @@
       el.classList.toggle('is-closed', !isOpen);
       $('span', el).innerHTML = el.classList.contains('compact') ? short : long;
     });
-    $$('[data-hours]').forEach((el) => { el.textContent = `${fmtHour(C.hours.open)}–${fmtHour(C.hours.close)}`; });
+    $$('[data-hours]').forEach((el) => { el.textContent = `${fmtHour(open)}–${fmtHour(close)}`; });
   }
 
   /* ---------------------------------------------------------------
-     Renderowanie treści sezonowych
+     Treści sezonowe
      --------------------------------------------------------------- */
   const highlightsEl = $('[data-highlights]');
   const marqueeEl = $('[data-marquee]');
@@ -86,7 +91,7 @@
     highlightsEl.innerHTML = s.highlights.map((h, i) => `
       <article class="card" data-reveal style="--i:${i}">
         <div class="card-img">
-          <img src="${IMG + h.img}" alt="${esc(h.alt)}" loading="lazy" width="480" height="600">
+          <img ${imgAttrs(h.img, '(max-width: 760px) 78vw, 380px')} loading="lazy" alt="${esc(h.alt)}">
           <span class="tag">${esc(h.tag)}</span>
         </div>
         <div class="card-body">
@@ -97,72 +102,26 @@
     observeReveals(highlightsEl);
   }
 
+  // Pas haseł: grupa powielona tak, żeby była szersza niż ekran, i zdublowana (pętla CSS przesuwa o -50%).
   function renderMarquee(s) {
-    const group = s.marquee.map((t) => `<span>${esc(t)}</span>`).join('');
-    marqueeEl.innerHTML = group;
-    // powielamy grupę, aż pas wypełni 2× szerokość ekranu (płynna pętla)
-    const gw = marqueeEl.scrollWidth || 1;
-    const copies = Math.max(2, Math.ceil((innerWidth * 2) / gw) + 1);
-    marqueeEl.innerHTML = group.repeat(copies);
-    marquee.groupWidth = gw;
+    const items = s.marquee.map((t) => `<span>${esc(t)}</span>`).join('');
+    marqueeEl.innerHTML = `<div class="marquee-group">${items}</div>`;
+    const one = marqueeEl.firstElementChild.scrollWidth || 1;
+    const group = `<div class="marquee-group">${items.repeat(Math.max(1, Math.ceil(innerWidth / one)))}</div>`;
+    marqueeEl.innerHTML = group + group;
   }
-
-  /* ---------------------------------------------------------------
-     Menu z zakładkami
-     --------------------------------------------------------------- */
-  const tabsEl = $('[data-tabs]');
-  const panelsEl = $('[data-panels]');
 
   function itemHTML(it, i) {
-    return `<div class="item" style="--i:${i}">
-      <div class="item-top"><h3>${esc(it.name)}</h3>${it.badge ? `<span class="badge-s">${esc(it.badge)}</span>` : ''}</div>
-      ${it.desc ? `<p>${esc(it.desc)}</p>` : ''}
-    </div>`;
-  }
-
-  function renderMenu() {
-    tabsEl.innerHTML = C.menu.map((c, i) => `
-      <button type="button" role="tab" id="tab-${c.id}" aria-controls="panel-${c.id}"
-        aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(c.label)}</button>`).join('');
-    panelsEl.innerHTML = C.menu.map((c, i) => `
-      <div class="panel${i === 0 ? ' is-shown' : ''}" role="tabpanel" id="panel-${c.id}" aria-labelledby="tab-${c.id}" ${i === 0 ? '' : 'hidden'}>
-        ${c.seasonal ? '' : c.items.map(itemHTML).join('')}
-        <p class="menu-note">Witryna zmienia się codziennie. Aktualną kartę z cenami znajdziesz na miejscu i w relacjach na Instagramie.</p>
-      </div>`).join('');
-
-    const tabs = $$('[role="tab"]', tabsEl);
-    const select = (tab, focus) => {
-      tabs.forEach((t) => {
-        const on = t === tab;
-        t.setAttribute('aria-selected', on);
-        t.tabIndex = on ? 0 : -1;
-        const p = document.getElementById(t.getAttribute('aria-controls'));
-        p.hidden = !on;
-        p.classList.toggle('is-shown', on);
-      });
-      if (focus) tab.focus();
-    };
-    tabs.forEach((t, i) => {
-      t.addEventListener('click', () => select(t));
-      t.addEventListener('keydown', (e) => {
-        const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-        if (d) { e.preventDefault(); select(tabs[(i + d + tabs.length) % tabs.length], true); }
-      });
-    });
+    return `<li class="item" style="--i:${i}"><span class="item-name">${esc(it.name)}${it.badge ? `<span class="badge-s">${esc(it.badge)}</span>` : ''}</span>${it.desc ? `<p>${esc(it.desc)}</p>` : ''}</li>`;
   }
 
   function renderSeasonalMenu(s) {
-    const panel = $('#panel-sezon');
-    if (!panel) return;
-    const note = $('.menu-note', panel);
-    panel.innerHTML = s.menuSeasonal.map(itemHTML).join('');
-    panel.append(note);
-    $('#tab-sezon').textContent = `Sezonowo · ${s.label}`;
+    $('[data-seasonal-menu]').innerHTML = s.menuSeasonal.map(itemHTML).join('');
+    $('#panel-sezon .panel-title').textContent = `Oferta sezonowa · ${s.label}`;
+    const tab = $('#tab-panel-sezon');
+    if (tab) tab.textContent = `Sezonowo · ${s.label}`;
   }
 
-  /* ---------------------------------------------------------------
-     Przełączanie sezonu
-     --------------------------------------------------------------- */
   function applySeason(key, { initial = false } = {}) {
     const s = C.seasons[key];
     if (!s) return;
@@ -180,13 +139,14 @@
       }
     });
 
-    $$('[data-s-img]').forEach((img) => {
-      const v = s[img.dataset.sImg];
-      if (!v) return;
-      img.src = IMG + v.src;
-      img.alt = v.alt;
-    });
+    const walker = $('[data-s-img="walkerImg"]');
+    const [w, h] = C.images[s.walkerImg.src];
+    walker.srcset = `${IMG}${s.walkerImg.src}-320.webp 320w, ${IMG}${s.walkerImg.src}.webp ${w}w`;
+    walker.src = `${IMG}${s.walkerImg.src}.webp`;
+    walker.width = w; walker.height = h;
+    walker.alt = s.walkerImg.alt;
 
+    window.CZ_setHero(key);
     renderHighlights(s);
     renderMarquee(s);
     renderSeasonalMenu(s);
@@ -196,10 +156,9 @@
     $$('[data-season-btn]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.seasonBtn === key));
 
     if (!initial) {
-      // powtórz animację wejścia hero
       $$('.hero-in').forEach((el) => { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; });
       const url = new URL(location.href);
-      if (url.searchParams.has('sezon')) { url.searchParams.set('sezon', key); history.replaceState(null, '', url); }
+      if (url.searchParams.has('sezon')) { url.searchParams.set('sezon', key); history.replaceState(history.state, '', url); }
     }
   }
 
@@ -214,7 +173,7 @@
     t.ready.then(() => {
       root.animate(
         { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${end}px at ${x}px ${y}px)`] },
-        { duration: 800, easing: 'cubic-bezier(.2,.7,.2,1)', pseudoElement: '::view-transition-new(root)' }
+        { duration: 600, easing: 'cubic-bezier(.2,.7,.2,1)', pseudoElement: '::view-transition-new(root)' }
       );
     }).catch(() => {});
   }
@@ -315,7 +274,7 @@
 
     new IntersectionObserver(([e]) => { visible = e.isIntersecting; start(); }).observe(canvas);
     document.addEventListener('visibilitychange', start);
-    addEventListener('resize', () => { if (type) { resize(); } }, { passive: true });
+    addEventListener('resize', () => { if (type) resize(); }, { passive: true });
 
     return {
       set(next) {
@@ -329,124 +288,214 @@
   })();
 
   /* ---------------------------------------------------------------
-     Marquee – ruch zależny od prędkości scrolla
+     Warstwy z obsługą przycisku „wstecz” (menu mobilne, podgląd zdjęć)
      --------------------------------------------------------------- */
-  const marquee = { x: 0, groupWidth: 1, boost: 0, dir: -1, visible: false, raf: 0 };
+  const layers = {};       // nazwa → funkcja zamykająca UI
+  let openLayer = null;
 
-  function marqueeFrame() {
-    marquee.raf = 0;
-    if (!marquee.visible) return;
-    marquee.x += marquee.dir * (0.6 + marquee.boost);
-    marquee.boost *= 0.92;
-    const gw = marquee.groupWidth;
-    if (marquee.x <= -gw) marquee.x += gw;
-    if (marquee.x > 0) marquee.x -= gw;
-    marqueeEl.style.setProperty('--mx', `${marquee.x}px`);
-    marquee.raf = requestAnimationFrame(marqueeFrame);
+  function pushLayer(name) {
+    openLayer = name;
+    root.classList.add('is-locked');
+    history.pushState({ czLayer: name }, '');
   }
-  new IntersectionObserver(([e]) => {
-    marquee.visible = e.isIntersecting && !reduceMotion;
-    if (marquee.visible && !marquee.raf) marquee.raf = requestAnimationFrame(marqueeFrame);
-  }).observe($('.marquee'));
+  // Zamknięcie z UI (×, Esc, tło, link) cofa wpis historii; właściwe zamknięcie robi popstate.
+  function closeLayer() { if (openLayer) history.back(); }
+  addEventListener('popstate', () => {
+    if (!openLayer) return;
+    const name = openLayer;
+    openLayer = null;
+    root.classList.remove('is-locked');
+    layers[name]();
+  });
 
   /* ---------------------------------------------------------------
-     Silnik efektów scrolla (jedna pętla rAF)
+     Nagłówek, aktywna pozycja menu, pasek akcji
      --------------------------------------------------------------- */
   const header = $('.site-header');
+  const sentinel = document.createElement('div');
+  sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:24px;pointer-events:none';
+  sentinel.setAttribute('aria-hidden', 'true');
+  document.body.prepend(sentinel);
+  new IntersectionObserver(([e]) => header.classList.toggle('is-scrolled', !e.isIntersecting)).observe(sentinel);
+
   const nav = $('#nav');
-  const progressBar = $('.progress span');
-  const hero = $('.hero');
-  const rays = $('[data-rays]');
-  const badge = $('[data-spin]');
-  const parallaxEls = $$('[data-parallax]');
-  const trail = $('[data-trail]');
-  const hs = $('[data-hscroll]');
-  const hsTrack = $('[data-hscroll-track]');
-  const hsImgs = $$('img', hsTrack);
-  const sunrise = $('[data-sunrise]');
-  const visit = $('#kontakt');
-  let lastY = scrollY, ticking = false, hsDistance = 0;
-
-  function layoutHScroll() {
-    if (isMobile()) { hs.style.removeProperty('--hs-height'); hsDistance = 0; return; }
-    hsDistance = Math.max(0, hsTrack.scrollWidth - innerWidth);
-    hs.style.setProperty('--hs-height', `${innerHeight + hsDistance}px`);
-  }
-
-  function update() {
-    ticking = false;
-    const y = scrollY;
-    const vh = innerHeight;
-    const max = document.documentElement.scrollHeight - vh;
-
-    progressBar.style.setProperty('--p', max > 0 ? y / max : 0);
-
-    // nagłówek: tło po zjechaniu, chowanie przy scrollu w dół
-    header.classList.toggle('is-scrolled', y > 20);
-    const navOpen = nav.classList.contains('is-open');
-    if (!navOpen) header.classList.toggle('is-hidden', y > lastY && y > 500);
-    if (Math.abs(y - lastY) > 2) {
-      marquee.boost = Math.min(8, marquee.boost + Math.abs(y - lastY) * 0.04);
-      marquee.dir = y > lastY ? -1 : 1;
+  const navLinks = $$('a[href^="#"]', nav);
+  const spyTargets = $$('main > section');
+  const spy = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const id = e.target.id;
+      navLinks.forEach((a) => {
+        if (id && a.hash === `#${id}`) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
     }
-    lastY = y;
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  spyTargets.forEach((t) => spy.observe(t));
 
-    if (reduceMotion) { trail.style.setProperty('--trail', 1); trail.style.setProperty('--trail-end', 1); }
-    else {
-      // hero: promienie się obracają, plakietka kręci
-      const hp = clamp(y / (hero.offsetHeight || 1));
-      rays.style.setProperty('--rot', `${hp * 28}deg`);
-      rays.style.setProperty('--sc', 1 + hp * 0.18);
-      badge.style.setProperty('--spin', `${y * 0.12}deg`);
-
-      // paralaksa
-      for (const el of parallaxEls) {
-        const r = el.parentElement.getBoundingClientRect();
-        if (r.bottom < -200 || r.top > vh + 200) continue;
-        const offset = (r.top + r.height / 2 - vh / 2) * parseFloat(el.dataset.parallax);
-        el.style.setProperty('--py', `${offset.toFixed(1)}px`);
-      }
-
-      // ścieżka spacerowa rysuje się podczas scrolla
-      const tr = trail.getBoundingClientRect();
-      const tp = clamp((vh * 0.75 - tr.top) / (tr.height * 0.85));
-      trail.style.setProperty('--trail', tp.toFixed(4));
-      trail.style.setProperty('--trail-end', clamp((tp - 0.82) / 0.18).toFixed(3));
-    }
-
-    // galeria pozioma (przypięta)
-    if (hsDistance > 0) {
-      const r = hs.getBoundingClientRect();
-      const p = clamp(-r.top / (r.height - vh));
-      hsTrack.style.setProperty('--hx', `${(-p * hsDistance).toFixed(1)}px`);
-      if (!reduceMotion) hsImgs.forEach((img, i) => img.style.setProperty('--gx', `${((p - i / hsImgs.length) * -40).toFixed(1)}px`));
-    }
-
-    // wschodzące słońce w sekcji kontakt
-    const vr = visit.getBoundingClientRect();
-    sunrise.style.setProperty('--rise', reduceMotion ? 1 : clamp((vh - vr.top) / (vr.height * 0.9)).toFixed(3));
-  }
-
-  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
-  addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('resize', () => {
-    layoutHScroll();
-    renderMarquee(C.seasons[root.dataset.season]);
-    onScroll();
-  }, { passive: true });
+  const actionBar = $('.action-bar');
+  const away = new Set();
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach((e) => (e.isIntersecting ? away.add(e.target) : away.delete(e.target)));
+    actionBar.classList.toggle('is-away', away.size > 0);
+  });
+  barObserver.observe($('#kontakt'));
+  barObserver.observe($('.footer'));
 
   /* ---------------------------------------------------------------
-     Nawigacja mobilna
+     Menu mobilne
      --------------------------------------------------------------- */
   const burger = $('.burger');
-  const setNav = (open) => {
+  let pendingHash = null;
+  const setNavUI = (open) => {
     nav.classList.toggle('is-open', open);
     burger.setAttribute('aria-expanded', open);
-    if (open) header.classList.remove('is-hidden');
+    burger.setAttribute('aria-label', open ? 'Zamknij menu' : 'Otwórz menu');
   };
-  burger.addEventListener('click', () => setNav(!nav.classList.contains('is-open')));
-  $$('a', nav).forEach((a) => a.addEventListener('click', () => setNav(false)));
-  addEventListener('keydown', (e) => { if (e.key === 'Escape') setNav(false); });
+  layers.nav = () => {
+    setNavUI(false);
+    if (pendingHash) {
+      const target = $(pendingHash);
+      history.pushState(null, '', pendingHash);
+      pendingHash = null;
+      // po popstate przeglądarka przywraca pozycję przewinięcia – przewijamy klatkę później
+      requestAnimationFrame(() => target?.scrollIntoView({ behavior }));
+    }
+  };
+  burger.addEventListener('click', () => {
+    if (nav.classList.contains('is-open')) closeLayer();
+    else { setNavUI(true); pushLayer('nav'); }
+  });
+  navLinks.forEach((a) => a.addEventListener('click', (e) => {
+    if (!nav.classList.contains('is-open')) return;
+    e.preventDefault();
+    pendingHash = a.hash;
+    closeLayer();
+  }));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && openLayer === 'nav') { closeLayer(); burger.focus(); } });
+
+  /* ---------------------------------------------------------------
+     Galeria: strzałki + licznik (komputer), przesuwanie palcem (telefon)
+     --------------------------------------------------------------- */
+  const track = $('[data-gallery]');
+  const photos = $$('.g-item:not(.g-cta)', track);
+  const allItems = $$('.g-item', track);
+  const prevBtn = $('[data-gallery-prev]');
+  const nextBtn = $('[data-gallery-next]');
+  const countEl = $('[data-gallery-count]');
+  const visibleItems = new Set();
+  $('[data-gallery-nav]').hidden = false;
+
+  const galleryObserver = new IntersectionObserver((entries) => {
+    entries.forEach((e) => (e.isIntersecting ? visibleItems.add(e.target) : visibleItems.delete(e.target)));
+    const idx = allItems.findIndex((it) => visibleItems.has(it));
+    if (idx >= 0) countEl.textContent = `${Math.min(idx + 1, photos.length)} / ${photos.length}`;
+    prevBtn.disabled = visibleItems.has(allItems[0]);
+    nextBtn.disabled = visibleItems.has(allItems[allItems.length - 1]);
+  }, { root: track, threshold: 0.9 });
+  allItems.forEach((it) => galleryObserver.observe(it));
+
+  const step = () => allItems[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(track).columnGap) || 0);
+  prevBtn.addEventListener('click', () => track.scrollBy({ left: -step(), behavior }));
+  nextBtn.addEventListener('click', () => track.scrollBy({ left: step(), behavior }));
+
+  /* ---------------------------------------------------------------
+     Podgląd zdjęć (lightbox)
+     --------------------------------------------------------------- */
+  const lb = $('[data-lb]');
+  const lbImg = $('[data-lb-img]');
+  const lbCaption = $('[data-lb-caption]');
+  const lbCount = $('[data-lb-count]');
+  const openers = $$('[data-lightbox]');
+  let lbIndex = 0, lbOpener = null;
+
+  function lbShow(i) {
+    lbIndex = (i + openers.length) % openers.length;
+    const btn = openers[lbIndex];
+    const img = $('img', btn);
+    lbImg.src = img.getAttribute('src');  // największa dostępna wersja
+    lbImg.alt = img.alt;
+    lbCaption.textContent = btn.closest('figure').querySelector('figcaption')?.textContent || '';
+    lbCount.textContent = `${lbIndex + 1} / ${openers.length}`;
+  }
+  layers.lb = () => { lb.close(); lbOpener?.focus(); };
+
+  openers.forEach((btn, i) => btn.addEventListener('click', () => {
+    lbOpener = btn;
+    lbShow(i);
+    lb.showModal();
+    pushLayer('lb');
+  }));
+  $('[data-lb-close]').addEventListener('click', closeLayer);
+  $('[data-lb-prev]').addEventListener('click', () => lbShow(lbIndex - 1));
+  $('[data-lb-next]').addEventListener('click', () => lbShow(lbIndex + 1));
+  lb.addEventListener('cancel', (e) => { e.preventDefault(); closeLayer(); });
+  lb.addEventListener('click', (e) => { if (e.target === lb || e.target.classList.contains('lb-figure')) closeLayer(); });
+  lb.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); lbShow(lbIndex - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); lbShow(lbIndex + 1); }
+  });
+  let swipeX = null;
+  lb.addEventListener('pointerdown', (e) => { swipeX = e.clientX; });
+  lb.addEventListener('pointerup', (e) => {
+    if (swipeX == null) return;
+    const dx = e.clientX - swipeX;
+    swipeX = null;
+    if (Math.abs(dx) > 50) lbShow(lbIndex + (dx < 0 ? 1 : -1));
+  });
+
+  /* ---------------------------------------------------------------
+     Menu – zakładki budowane z paneli w HTML (bez JS widać wszystkie)
+     --------------------------------------------------------------- */
+  function initTabs() {
+    const tabsEl = $('[data-tabs]');
+    const panels = $$('[data-panels] .panel');
+    tabsEl.innerHTML = panels.map((p, i) => `
+      <button type="button" role="tab" id="tab-${p.id}" aria-controls="${p.id}"
+        aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(p.dataset.panelLabel)}</button>`).join('');
+    panels.forEach((p, i) => {
+      p.setAttribute('role', 'tabpanel');
+      p.setAttribute('aria-labelledby', `tab-${p.id}`);
+      p.hidden = i !== 0;
+      p.classList.toggle('is-shown', i === 0);
+    });
+    tabsEl.hidden = false;
+    $('[data-panels]').classList.add('tabs-ready');
+
+    const tabs = $$('[role="tab"]', tabsEl);
+    const select = (tab, focus) => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', on);
+        t.tabIndex = on ? 0 : -1;
+        const p = document.getElementById(t.getAttribute('aria-controls'));
+        p.hidden = !on;
+        p.classList.toggle('is-shown', on);
+      });
+      if (focus) tab.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (d) { e.preventDefault(); select(tabs[(i + d + tabs.length) % tabs.length], true); }
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     Mapa Google – wczytywana dopiero po kliknięciu
+     --------------------------------------------------------------- */
+  $('[data-map-load]').addEventListener('click', () => {
+    const map = $('[data-map]');
+    const iframe = document.createElement('iframe');
+    iframe.title = 'Mapa Google: Café Zakrzówek, ul. Wyłom 22, Kraków';
+    iframe.src = 'https://www.google.com/maps?q=Caf%C3%A9+Zakrz%C3%B3wek,+Wy%C5%82om+22,+Krak%C3%B3w&z=15&output=embed';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    map.append(iframe);
+    $('.map-cta', map).remove();
+    iframe.focus();
+  });
 
   /* ---------------------------------------------------------------
      „Ile mam do was?” – odległość pieszo
@@ -455,8 +504,8 @@
   const haversine = (a, b) => {
     const R = 6371e3, rad = Math.PI / 180;
     const dLat = (b.lat - a.lat) * rad, dLng = (b.lng - a.lng) * rad;
-    const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
-    return 2 * R * Math.asin(Math.sqrt(h));
+    const x = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(x));
   };
 
   $('[data-locate]').addEventListener('click', (e) => {
@@ -476,7 +525,7 @@
       const dist = d < 1000 ? `${Math.round(d / 10) * 10} m` : `${(d / 1000).toFixed(1).replace('.', ',')} km`;
       if (d < 120) out.innerHTML = '<strong>Jesteś praktycznie u nas!</strong> Wpadaj ☼';
       else if (d > 15000) out.innerHTML = `Jesteś ok. <strong>${dist}</strong> od nas – zapraszamy przy najbliższym spacerze nad Zakrzówkiem ☼`;
-      else out.innerHTML = `Jesteś ok. <strong>${dist}</strong> od nas – to ok. <strong>${min} min</strong> spacerem. <a href="${$('[data-directions]').href}" target="_blank" rel="noopener">Pokaż trasę →</a>`;
+      else out.innerHTML = `Jesteś ok. <strong>${dist}</strong> od nas – to ok. <strong>${min} min</strong> spacerem. <a href="${$('[data-directions]').href}" target="_blank" rel="noopener">Pokaż trasę pieszą</a>`;
     }, () => {
       btn.disabled = false;
       out.textContent = 'Bez dostępu do lokalizacji nie policzymy odległości – ale trasę pokaże Ci mapa po kliknięciu „Prowadź do nas”.';
@@ -487,18 +536,17 @@
      Start
      --------------------------------------------------------------- */
   $$('[data-split]').forEach((el) => splitWords(el, el.textContent.trim()));
-  renderMenu();
+  initTabs();
   applySeason(root.dataset.season, { initial: true });
   observeReveals();
   updateOpenStatus();
   setInterval(updateOpenStatus, 60000);
   $$('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
-  layoutHScroll();
-  update();
 
-  document.fonts?.ready.then(() => {
-    renderMarquee(C.seasons[root.dataset.season]);
-    layoutHScroll();
-    update();
-  });
+  let resizeRaf = 0;
+  addEventListener('resize', () => {
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(() => renderMarquee(C.seasons[root.dataset.season]));
+  }, { passive: true });
+  document.fonts?.ready.then(() => renderMarquee(C.seasons[root.dataset.season]));
 })();
