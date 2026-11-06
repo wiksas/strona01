@@ -1,20 +1,19 @@
+---
+layout: null
+---
+{%- include zmienne.html -%}
+{%- capture obrazy -%}
+{{ F.og_obraz }}|{% for id in ids %}{% assign s = site.data.sezony[id] %}{{ s.hero_glowne.obraz }}|{{ s.hero_polaroid.obraz }}|{{ s.spacer_obraz.obraz }}|{% for k in s.karty %}{{ k.obraz }}|{% endfor %}{% endfor %}{% for z in P.galeria.zdjecia %}{{ z.obraz }}|{% endfor %}{{ P.przestrzen.obraz }}|{{ P.przyjecia.obraz_glowny }}|{{ P.przyjecia.obraz_boczny }}|{{ P.kontakt.mapa }}
+{%- endcapture -%}
+{%- assign lista = obrazy | split: '|' | uniq -%}
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://wiksas.github.io/strona01/</loc>
-    <lastmod>2026-11-06</lastmod>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/cafe-zakrzowek-krakow-og.jpg</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/frugoo-matcha-widok-na-zalew-zakrzowek.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/poziomianki-nad-zalewem-zakrzowek.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/kawa-na-wynos-kubki-cafe-zakrzowek.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/szachy-i-kawa-w-kawiarni-krakow.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/baristki-cafe-zakrzowek-krakow.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/croissanty-wytrawne-cafe-zakrzowek.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/sala-na-przyjecia-cafe-zakrzowek-krakow.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/spotkanie-podroznicze-cafe-zakrzowek.webp</image:loc></image:image>
-    <image:image><image:loc>https://wiksas.github.io/strona01/assets/img/mapa-dojazdu-cafe-zakrzowek-wylom-22.webp</image:loc></image:image>
+    <loc>{{ base }}</loc>
+    <lastmod>{{ site.time | date: '%Y-%m-%d' }}</lastmod>
+    {%- for o in lista %}{% if o != '' %}
+    <image:image><image:loc>{{ o | absolute_url }}</image:loc></image:image>
+    {%- endif %}{% endfor %}
   </url>
 </urlset>

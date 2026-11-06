@@ -1,57 +1,96 @@
 # Café Zakrzówek ☼ – strona www
 
-Statyczna strona (HTML + CSS + JS, bez budowania). Wystarczy wrzucić cały folder na dowolny hosting.
-Obecny adres: https://wiksas.github.io/strona01/ (GitHub Pages).
+Strona na GitHub Pages: https://wiksas.github.io/strona01/
+Panel treści (Sveltia CMS): https://wiksas.github.io/strona01/admin/
 
-Podgląd lokalny:
+Treści są w plikach `_data/*.yml`. GitHub Pages przy każdym commicie składa z nich gotowy HTML (Jekyll),
+więc cała treść jest w kodzie strony od razu – bez czekania na JavaScript (ważne dla Google).
 
-```
-python -m http.server 8765
-```
+## Panel treści (Sveltia CMS)
 
-i otwórz http://127.0.0.1:8765
+1. Wejdź na `/admin/`.
+2. Kliknij **Sign In Using Access Token**. Okno podpowie link do GitHuba z gotowymi uprawnieniami – wygeneruj token,
+   wklej go i gotowe (token zostaje zapisany w tej przeglądarce). Potrzebne jest konto GitHub z prawem zapisu do repozytorium.
+   Token „fine-grained” musi mieć dostęp do repozytorium `wiksas/strona01` z uprawnieniem **Contents: Read and write**.
+3. Edytuj i kliknij **Zapisz** – to commit na `main`. Strona przebudowuje się sama w ok. 1–3 minuty.
+
+Alternatywnie **Work with Local Repository** (Chrome/Edge) edytuje pliki w lokalnym folderze repozytorium – potem trzeba je samemu zacommitować.
+
+Logowanie przyciskiem „Sign In with GitHub” (bez tokenu – wygodniejsze dla obsługi kawiarni) wymaga wdrożenia
+[Sveltia CMS Authenticator](https://github.com/sveltia/sveltia-cms-auth) na Cloudflare Workers i aplikacji OAuth na GitHubie.
+Potem w `admin/config.yml` odkomentuj `base_url` i dopisz `oauth` do `auth_methods`.
+
+### Co jest w panelu
+
+| Sekcja panelu | Plik | Co zmienia |
+|---|---|---|
+| Wersje sezonowe → Wiosna / Lato / Jesień / Zima | `_data/sezony/*.yml` | nagłówek, tekst, zdjęcia hero, plakietka, sekcja „Na spacer”, oferta sezonowa (karty), hasła na pasku, zakładka „Sezonowo” w menu, animacja |
+| Treści strony → Dane kawiarni i SEO | `_data/firma.yml` | nazwa, telefon, e-mail, adres, godziny, linki, tytuł i opis w Google, obrazek do udostępniania |
+| Treści strony → pozostałe | `_data/strona/*.yml` | góra strony, „Na spacer”, galeria, menu, przestrzeń, przyjęcia, pytania (FAQ), dojazd |
+
+Pytania (FAQ) trafiają automatycznie także do danych strukturalnych dla Google – wystarczy edytować je w jednym miejscu.
+
+### Zdjęcia
+
+Zdjęcia wgrane przez panel są automatycznie zmieniane na WebP (maks. 1280 px) i trafiają do `assets/img/`.
+Pliki z przyrostkiem `-320.webp` to mniejsze wersje dla telefonów – są tylko dla zdjęć przygotowanych ręcznie.
+Jeśli obok zdjęcia `nazwa.webp` położysz `nazwa-320.webp` (320 px szerokości) i dopiszesz wymiary do `_data/obrazy.yml`,
+strona sama zacznie używać mniejszej wersji.
 
 ## Wersje sezonowe
 
-Sezon wybiera się automatycznie wg daty: mar–maj **wiosna**, cze–sie **lato**, wrz–lis **jesień**, gru–lut **zima** (zima ma ciemny, wieczorny motyw).
-Odwiedzający mogą przełączyć sezon ikonami w nagłówku (wybór pamiętany do końca sesji).
-Link do konkretnej wersji: `?sezon=wiosna`, `?sezon=lato`, `?sezon=jesien`, `?sezon=zima`.
+Sezon wybiera się automatycznie wg daty: mar–maj **wiosna**, cze–sie **lato**, wrz–lis **jesień**, gru–lut **zima** (zima ma ciemny motyw).
+W HTML zapisywana jest wersja sezonu z chwili budowania strony; skrypt i tak przełącza na bieżący.
+Odwiedzający mogą zmienić sezon ikonami w nagłówku. Link do konkretnej wersji: `?sezon=wiosna|lato|jesien|zima`.
 
-## Gdzie co edytować
+## Pliki techniczne
 
-| Co | Plik |
+| Co | Gdzie |
 |---|---|
-| Teksty sezonowe, karty „Teraz u nas”, pasek z hasłami, oferta sezonowa w menu | `js/seasons.js` → `seasons` |
-| Zdjęcia w hero (łuk + polaroid) dla każdego sezonu | `index.html` → skrypt w `<head>` (`H = {…}`) |
-| Domyślna treść w HTML (widoczna bez JS i dla wyszukiwarek) | `index.html` – obecnie wersja jesienna |
-| Menu („Z witryny”, „Kawa i matcha”) | `index.html` → sekcja `#menu` |
-| Pytania (FAQ) | `index.html` → sekcja `#pytania` **i** blok `FAQPage` w JSON-LD (treść musi być identyczna) |
-| Godziny otwarcia | `js/seasons.js` → `hours`, `index.html` (FAQ, JSON-LD, teksty) |
-| Kolory sezonów | `css/style.css` → `html[data-season="…"]` |
-| Zdjęcia | `assets/img/` – `nazwa.webp` + `nazwa-320.webp`; nowe zdjęcie dopisz też do `images` w `js/seasons.js` i do `sitemap.xml` |
+| Szablon strony | `index.html` (Liquid), `_includes/` |
+| Dane sezonów dla skryptu | `js/seasons.js` – generowany z `_data/`, nie edytuj ręcznie |
+| Zachowanie strony | `js/main.js` |
+| Wygląd, kolory sezonów | `css/style.css` (`html[data-season="…"]`) |
+| Konfiguracja panelu | `admin/config.yml` |
+| Adres strony (canonical, sitemap, og) | `_config.yml` → `url` i `baseurl` |
 
-Po każdej zmianie CSS/JS podbij wersję `?v=RRRRMMDD` w `index.html` i `404.html`.
+Po zmianie CSS lub `main.js` podbij `?v=RRRRMMDD` w `index.html` i `404.html` (`seasons.js` wersjonuje się sam).
+
+## Podgląd lokalny
+
+Potrzebny Docker (ten sam obraz, którego używa GitHub Pages):
+
+```
+docker run --rm -v "%cd%:/github/workspace" -w /github/workspace -e GITHUB_WORKSPACE=/github/workspace ^
+  -e INPUT_SOURCE=. -e INPUT_DESTINATION=./_site -e INPUT_FUTURE=false -e INPUT_BUILD_REVISION=local ^
+  -e INPUT_VERBOSE=false -e INPUT_TOKEN= -e GITHUB_REPOSITORY=wiksas/strona01 ^
+  ghcr.io/actions/jekyll-build-pages:v1.0.13
+mkdir _preview & xcopy /e /i /y _site _preview\strona01
+python -m http.server 8765 --directory _preview
+```
+
+i otwórz http://127.0.0.1:8765/strona01/
 
 ## Zmiana domeny
 
-Adres `https://wiksas.github.io/strona01/` jest wpisany w: `index.html` (canonical, `og:*`, JSON-LD), `404.html` (`<base>`),
-`robots.txt`, `sitemap.xml`. Przy przejściu na własną domenę zmień go we wszystkich tych miejscach i ustaw przekierowanie 301
-ze starego adresu. `robots.txt` działa tylko w katalogu głównym domeny – na `github.io/strona01/` Google go nie czyta,
-więc sitemapę trzeba zgłosić ręcznie w Search Console.
+Zmień `url` i `baseurl` w `_config.yml` (np. `url: "https://cafezakrzowek.pl"`, `baseurl: ""`) oraz `site_url`
+i `display_url` w `admin/config.yml`. Canonical, `og:*`, JSON-LD, `sitemap.xml`, `robots.txt` i strona 404 przeliczą się same.
+Ze starego adresu ustaw przekierowanie 301. `robots.txt` działa dopiero w katalogu głównym domeny – na `github.io/strona01/`
+sitemapę trzeba zgłosić ręcznie w Search Console.
 
 ## Do sprawdzenia z kawiarnią
 
 - Godziny: przyjęto **9–19 codziennie** (post na IG z kwietnia 2026); OpenStreetMap podaje 9–20.
 - FAQ powstało z informacji z Instagrama – kawiarnia powinna potwierdzić odpowiedzi i dopisać pytania, które klienci faktycznie zadają.
-- W menu są tylko pozycje widoczne w postach. Pełna karta napojów jest w relacjach na IG – warto ją dostać i wpisać.
+- W menu są tylko pozycje widoczne w postach. Pełna karta napojów jest w relacjach na IG – warto ją wpisać przez panel.
 - Zdjęcia z IG mają ~480–640 px – przydadzą się oryginały w wyższej rozdzielczości.
 
 ## Rekomendacje (wymagają danych od klienta albo pracy poza stroną)
 
 - **Własna domena** i przekierowanie 301 z `github.io`; wtedy `robots.txt` zacznie działać.
 - **Google Search Console** (weryfikacja przez DNS), wysłanie `sitemap.xml`; potem Bing Webmaster Tools (import z GSC).
-- **Wizytówka Google**: uzupełnić kategorię, godziny, zdjęcia, link do strony; podmienić link „Opinie w Google” i `hasMap`
-  w JSON-LD na bezpośredni link do wizytówki (teraz to wyszukiwanie w Mapach).
+- **Wizytówka Google**: uzupełnić kategorię, godziny, zdjęcia, link do strony; wpisać bezpośredni link do wizytówki
+  w panelu (Dane kawiarni → Wizytówka Google) – teraz to wyszukiwanie w Mapach.
 - **Opinie na stronie**: potrzebne prawdziwe opinie (tekst + podpis, za zgodą autorów). Bez gwiazdek w JSON-LD.
 - **Podstrona „Sala na przyjęcia”**: osobna fraza („sala na urodziny / imprezę firmową Kraków”). Potrzebne dane:
   pojemność sali, oferta cateringowa, zdjęcia sali, ewentualnie ceny.

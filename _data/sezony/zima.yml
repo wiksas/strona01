@@ -1,0 +1,51 @@
+nazwa: Zima
+kolor_motywu: "#1b242b"
+czasteczki: snow
+tytul1: Zima
+tytul2: w cieple
+tytul_kursywa: gorąca kawa z widokiem na zalew
+wstep: "Zimowy spacer nad Zakrzówkiem najlepiej kończy się w cieple: kawa, matcha albo coś rozgrzewającego i widok przez duże okna."
+hero_glowne:
+  obraz: /assets/img/szachy-i-kawa-w-kawiarni-krakow.webp
+  alt: Cappuccino i matcha latte przy partii szachów w Café Zakrzówek
+hero_polaroid:
+  obraz: /assets/img/baristki-cafe-zakrzowek-krakow.webp
+  alt: Baristki Café Zakrzówek z kawą i gazetą w kawiarni
+plakietka: rozgrzej się ☼ na wynos ☼ rozgrzej się ☼ na wynos ☼
+spacer_tytul: Zimno na spacerze? Wpadnij się ogrzać.
+spacer_wstep: Jesteśmy przy ul. Wyłom 22, tuż przy ścieżkach wokół zalewu. Gorąca kawa na wynos do rąk albo ciepły stolik w środku.
+spacer_obraz:
+  obraz: /assets/img/kawa-na-wynos-kubki-cafe-zakrzowek.webp
+  alt: Dwie kawy na wynos w kubkach z logo Café Zakrzówek
+oferta_nadtytul: Oferta zimowa
+oferta_tytul: Zima u nas
+oferta_wstep: Ciepło, kawa i sala na spotkania – także w większym gronie.
+hasla:
+  - gorąca kawa
+  - napoje ciepłe
+  - matcha
+  - sala na przyjęcia
+  - zima nad Zakrzówkiem
+  - na wynos
+karty:
+  - etykieta: na rozgrzanie
+    tytul: Kawy i napoje ciepłe
+    tekst: Cappuccino, matcha latte i coś słodkiego do tego – w środku albo na wynos.
+    obraz: /assets/img/szachy-i-kawa-w-kawiarni-krakow.webp
+    alt: Cappuccino i matcha latte na stoliku obok szachownicy
+  - etykieta: w większym gronie
+    tytul: Przyjęcia i imprezy firmowe
+    tekst: Duża, klimatyczna sala z pięknym widokiem. Zarezerwuj termin wcześniej.
+    obraz: /assets/img/sala-na-przyjecia-cafe-zakrzowek-krakow.webp
+    alt: Sala na przyjęcia w Café Zakrzówek z nakrytymi stołami
+  - etykieta: na ciepło
+    tytul: Croissanty wytrawne
+    tekst: Codziennie w witrynie – chętnie podgrzejemy.
+    obraz: /assets/img/croissanty-wytrawne-cafe-zakrzowek.webp
+    alt: Croissanty wytrawne z warzywami na drewnianej desce
+menu_sezonowe:
+  - nazwa: Napoje ciepłe
+    opis: Na rozgrzanie po zimowym spacerze.
+  - nazwa: Croissanty na ciepło
+    opis: Prosto z witryny, podgrzane.
+  - nazwa: Matcha latte

@@ -1,4 +1,7 @@
+---
+layout: null
+---
 User-agent: *
 Allow: /
 
-Sitemap: https://wiksas.github.io/strona01/sitemap.xml
+Sitemap: {{ '/sitemap.xml' | absolute_url }}

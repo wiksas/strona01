@@ -1,0 +1,22 @@
+{%- comment -%} Wspólne zmienne dla szablonów. Sezon domyślny = sezon w chwili budowania strony (JS i tak ustawia bieżący). {%- endcomment -%}
+{%- assign F = site.data.firma -%}
+{%- assign P = site.data.strona -%}
+{%- assign base = site.url | append: site.baseurl | append: '/' -%}
+{%- assign tel_raw = F.telefon | remove: ' ' | remove: '-' -%}
+{%- assign tel_first = tel_raw | slice: 0 -%}
+{%- if tel_first == '+' -%}
+  {%- assign tel_link = tel_raw -%}
+  {%- assign tel_intl = F.telefon -%}
+{%- else -%}
+  {%- assign tel_link = tel_raw | prepend: '+48' -%}
+  {%- assign tel_intl = F.telefon | prepend: '+48 ' -%}
+{%- endif -%}
+{%- assign godziny = F.godziny.otwarcie | append: ':00–' | append: F.godziny.zamkniecie | append: ':00' -%}
+{%- assign trasa = 'https://www.google.com/maps/dir/?api=1&destination=' | append: F.szerokosc_geo | append: ',' | append: F.dlugosc_geo | append: '&travelmode=walking' -%}
+{%- assign ids = 'wiosna,lato,jesien,zima' | split: ',' -%}
+{%- assign miesiac = site.time | date: '%-m' | plus: 0 -%}
+{%- if miesiac >= 3 and miesiac <= 5 -%}{%- assign sid = 'wiosna' -%}
+{%- elsif miesiac >= 6 and miesiac <= 8 -%}{%- assign sid = 'lato' -%}
+{%- elsif miesiac >= 9 and miesiac <= 11 -%}{%- assign sid = 'jesien' -%}
+{%- else -%}{%- assign sid = 'zima' -%}{%- endif -%}
+{%- assign S = site.data.sezony[sid] -%}

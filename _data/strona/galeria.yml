@@ -1,0 +1,31 @@
+nadtytul: Widok, który zatrzymuje
+tytul: Widok na Zakrzówek z naszego Instagrama
+zdjecia:
+  - obraz: /assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp
+    alt: Drożdżówki z kruszonką i owocami na drewnianej desce, w tle drzewa i zalew Zakrzówek
+    podpis: Drożdżówka, słońce i widok, który zatrzymuje lato na dłużej
+    szerokie: false
+  - obraz: /assets/img/frugoo-matcha-widok-na-zalew-zakrzowek.webp
+    alt: Matcha wlewana do szklanki z lemoniadą marakuja, w tle zalew Zakrzówek
+    podpis: Frugoo Matcha – lemoniada marakuja i matcha na upalne dni
+    szerokie: false
+  - obraz: /assets/img/szachy-i-kawa-w-kawiarni-krakow.webp
+    alt: Partia szachów przy cappuccino i matcha latte w Café Zakrzówek
+    podpis: Przestrzeń do rozrywki i odpoczynku
+    szerokie: true
+  - obraz: /assets/img/poziomianki-nad-zalewem-zakrzowek.webp
+    alt: Drożdżówki z truskawkami na drewnianej desce, w tle turkusowy zalew Zakrzówek
+    podpis: Poziomianki – edycja mocno limitowana
+    szerokie: false
+  - obraz: /assets/img/baristki-cafe-zakrzowek-krakow.webp
+    alt: Trzy baristki Café Zakrzówek z kawą i gazetą przy barze
+    podpis: Kawa, gazetka i nasze świetne baristki
+    szerokie: false
+  - obraz: /assets/img/croissanty-wytrawne-cafe-zakrzowek.webp
+    alt: Croissanty wytrawne z pomidorem, mozzarellą i warzywami na drewnianej desce
+    podpis: Croissanty wytrawne – codziennie w witrynie
+    szerokie: true
+  - obraz: /assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem.webp
+    alt: Malinianki z kremem pistacjowym i malinami, w tle zalew Zakrzówek
+    podpis: Malinianki z kremem pistacjowym
+    szerokie: false

@@ -1,0 +1,5 @@
+{%- assign _src = include.img.obraz -%}
+{%- assign _d = site.data.obrazy[_src] -%}
+{%- assign _small = _src | replace: '.webp', '-320.webp' -%}
+{%- assign _has = site.static_files | where: "path", _small | size -%}
+{"src":{{ _src | relative_url | jsonify }},"small":{% if _has > 0 and _small != _src %}{{ _small | relative_url | jsonify }}{% else %}null{% endif %},"w":{{ _d[0] | default: 480 }},"h":{{ _d[1] | default: 640 }},"alt":{{ include.img.alt | jsonify }}}

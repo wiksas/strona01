@@ -1,0 +1,26 @@
+nadtytul: Karta
+tytul: "Menu kawiarni: kawa, matcha i wypieki"
+wstep: Witryna zmienia się codziennie – zawsze znajdziesz w niej coś innego. Niektóre pozycje chętnie podgrzejemy.
+witryna_tytul: Z witryny – codziennie
+witryna_zakladka: Z witryny
+witryna:
+  - nazwa: Croissant z boczkiem i jajkiem
+  - nazwa: Croissant caprese
+  - nazwa: Croissant z hummusem
+    opis: i grillowanymi warzywami
+  - nazwa: Croissant z guacamole i jajkiem
+  - nazwa: Kanapka z pastą jajeczną
+  - nazwa: Kanapka z twarożkiem
+  - nazwa: Kanapka z szynką i serem
+  - nazwa: Kanapka z pasztetem
+  - nazwa: Drożdżówki
+    opis: malinianki, a sezonowo jagodzianki i poziomianki
+napoje_tytul: Kawa i matcha
+napoje_zakladka: Kawa i matcha
+napoje:
+  - nazwa: Cappuccino
+  - nazwa: Iced latte
+  - nazwa: Matcha latte
+  - nazwa: Frugoo Matcha
+    opis: lemoniada marakuja + matcha
+napoje_notka: Pełna karta napojów – kawy ciepłe i zimne, matcha, napoje ciepłe i zimne – jest w wyróżnionych relacjach na [naszym Instagramie](https://www.instagram.com/cafe.zakrzowek/) i na miejscu.

@@ -1,24 +1,28 @@
+---
+# Szablon strony głównej. Treści są w _data/ (edycja w Sveltia CMS: /admin/).
+---
+{%- include zmienne.html -%}
 <!doctype html>
-<html lang="pl" data-season="jesien">
+<html lang="pl" data-season="{{ sid }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Kawiarnia nad Zakrzówkiem w Krakowie | Café Zakrzówek</title>
-  <meta name="description" content="Kawiarnia z widokiem na zalew Zakrzówek w Krakowie, ul. Wyłom 22. Kawa na wynos na spacer, drożdżówki, croissanty, matcha i sala na przyjęcia. Wpadnij!">
-  <link rel="canonical" href="https://wiksas.github.io/strona01/">
+  <title>{{ F.seo_tytul | escape }}</title>
+  <meta name="description" content="{{ F.seo_opis | escape }}">
+  <link rel="canonical" href="{{ base }}">
   <meta name="robots" content="index, follow, max-image-preview:large, max-video-preview:-1">
-  <meta name="theme-color" content="#f2e9dc">
+  <meta name="theme-color" content="{{ S.kolor_motywu }}">
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pl_PL">
-  <meta property="og:site_name" content="Café Zakrzówek">
-  <meta property="og:title" content="Kawiarnia nad Zakrzówkiem w Krakowie | Café Zakrzówek">
-  <meta property="og:description" content="Kawiarnia z widokiem na zalew Zakrzówek w Krakowie, ul. Wyłom 22. Kawa na wynos na spacer, drożdżówki, croissanty, matcha i sala na przyjęcia. Wpadnij!">
-  <meta property="og:url" content="https://wiksas.github.io/strona01/">
-  <meta property="og:image" content="https://wiksas.github.io/strona01/assets/img/cafe-zakrzowek-krakow-og.jpg">
+  <meta property="og:site_name" content="{{ F.nazwa | escape }}">
+  <meta property="og:title" content="{{ F.seo_tytul | escape }}">
+  <meta property="og:description" content="{{ F.seo_opis | escape }}">
+  <meta property="og:url" content="{{ base }}">
+  <meta property="og:image" content="{{ F.og_obraz | absolute_url }}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Logo Café Zakrzówek, Frugoo Matcha na balkonie z widokiem na zalew i drożdżówki z owocami na drewnianej desce">
+  <meta property="og:image:alt" content="{{ F.og_obraz_alt | escape }}">
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="icon" href="assets/favicon-48.png" sizes="48x48" type="image/png">
@@ -30,19 +34,14 @@
   <link rel="preload" href="assets/fonts/lora-normal-400-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css?v=20261106">
 
-  <!-- Sezon i zdjęcia hero ustawiane przed renderem (bez mignięcia motywu, szybki LCP).
-       Zdjęcia hero dla sezonów edytujesz TUTAJ; reszta treści sezonowych jest w js/seasons.js. -->
+  <!-- Sezon i zdjęcia hero ustawiane przed renderem (bez mignięcia motywu, szybki LCP). -->
   <script>
     (function () {
       var H = {
-        wiosna: [['kawa-na-wynos-kubki-cafe-zakrzowek', 498, 640, 'Dwie kawy na wynos w kubkach Café Zakrzówek i bukiet wiosennych kwiatów'],
-                 ['baristki-cafe-zakrzowek-krakow', 480, 640, 'Baristki Café Zakrzówek z kawą i gazetą w kawiarni']],
-        lato:   [['frugoo-matcha-widok-na-zalew-zakrzowek', 480, 640, 'Frugoo Matcha – matcha wlewana do lemoniady marakuja, w tle zalew Zakrzówek'],
-                 ['poziomianki-nad-zalewem-zakrzowek', 480, 640, 'Drożdżówki z truskawkami na drewnianej desce, w tle turkusowy zalew Zakrzówek']],
-        jesien: [['malinianki-z-kremem-pistacjowym-nad-zalewem', 480, 640, 'Malinianki z kremem pistacjowym na drewnianej desce, w tle zalew Zakrzówek'],
-                 ['szachy-i-kawa-w-kawiarni-krakow', 640, 478, 'Partia szachów przy cappuccino i matcha latte w Café Zakrzówek']],
-        zima:   [['szachy-i-kawa-w-kawiarni-krakow', 640, 478, 'Cappuccino i matcha latte przy partii szachów w Café Zakrzówek'],
-                 ['baristki-cafe-zakrzowek-krakow', 480, 640, 'Baristki Café Zakrzówek z kawą i gazetą w kawiarni']]
+        {%- for id in ids -%}
+          {%- assign s = site.data.sezony[id] %}
+        "{{ id }}": [{% include obraz-json.html img=s.hero_glowne %}, {% include obraz-json.html img=s.hero_polaroid %}]{% unless forloop.last %},{% endunless %}
+        {%- endfor %}
       };
       var valid = ['wiosna', 'lato', 'jesien', 'zima'];
       var q = new URLSearchParams(location.search).get('sezon');
@@ -55,22 +54,26 @@
       root.setAttribute('data-season', s);
       root.classList.add('js');
 
-      var srcset = function (n, w) { return 'assets/img/' + n + '-320.webp 320w, assets/img/' + n + '.webp ' + w + 'w'; };
+      var srcset = function (d) { return d.small ? d.small + ' 320w, ' + d.src + ' ' + d.w + 'w' : ''; };
       var link = document.createElement('link');
       link.rel = 'preload'; link.as = 'image'; link.fetchPriority = 'high';
-      link.setAttribute('imagesrcset', srcset(H[s][0][0], H[s][0][1]));
-      link.setAttribute('imagesizes', '(max-width: 760px) 60vw, 420px');
+      if (H[s][0].small) {
+        link.setAttribute('imagesrcset', srcset(H[s][0]));
+        link.setAttribute('imagesizes', '(max-width: 760px) 60vw, 420px');
+      } else {
+        link.href = H[s][0].src;
+      }
       document.head.appendChild(link);
 
-      window.CZ_HERO = H;
       window.CZ_setHero = function (season) {
         var imgs = document.querySelectorAll('[data-hero]');
         for (var i = 0; i < imgs.length; i++) {
           var d = H[season][imgs[i].getAttribute('data-hero') === 'main' ? 0 : 1];
-          imgs[i].srcset = srcset(d[0], d[1]);
-          imgs[i].src = 'assets/img/' + d[0] + '.webp';
-          imgs[i].width = d[1]; imgs[i].height = d[2];
-          imgs[i].alt = d[3];
+          var set = srcset(d);
+          if (set) imgs[i].srcset = set; else imgs[i].removeAttribute('srcset');
+          imgs[i].src = d.src;
+          imgs[i].width = d.w; imgs[i].height = d.h;
+          imgs[i].alt = d.alt;
         }
       };
     })();
@@ -82,42 +85,42 @@
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": "https://wiksas.github.io/strona01/#website",
-        "url": "https://wiksas.github.io/strona01/",
-        "name": "Café Zakrzówek",
+        "@id": "{{ base }}#website",
+        "url": "{{ base }}",
+        "name": {{ F.nazwa | jsonify }},
         "inLanguage": "pl-PL",
-        "publisher": { "@id": "https://wiksas.github.io/strona01/#cafe" }
+        "publisher": { "@id": "{{ base }}#cafe" }
       },
       {
         "@type": "CafeOrCoffeeShop",
-        "@id": "https://wiksas.github.io/strona01/#cafe",
-        "name": "Café Zakrzówek",
-        "description": "Kawiarnia z widokiem na zalew Zakrzówek w Krakowie (Dębniki). Kawa na wynos, drożdżówki, croissanty, matcha i sala na przyjęcia.",
-        "url": "https://wiksas.github.io/strona01/",
-        "telephone": "+48 795 455 233",
-        "email": "cafe.zakrzowek@gmail.com",
-        "logo": "https://wiksas.github.io/strona01/assets/logo-cafe-zakrzowek.png",
+        "@id": "{{ base }}#cafe",
+        "name": {{ F.nazwa | jsonify }},
+        "description": {{ F.opis | jsonify }},
+        "url": "{{ base }}",
+        "telephone": {{ tel_intl | jsonify }},
+        "email": {{ F.email | jsonify }},
+        "logo": "{{ '/assets/logo-cafe-zakrzowek.png' | absolute_url }}",
         "image": [
-          "https://wiksas.github.io/strona01/assets/img/cafe-zakrzowek-krakow-og.jpg",
-          "https://wiksas.github.io/strona01/assets/img/frugoo-matcha-widok-na-zalew-zakrzowek.webp",
-          "https://wiksas.github.io/strona01/assets/img/sala-na-przyjecia-cafe-zakrzowek-krakow.webp"
+          "{{ F.og_obraz | absolute_url }}",
+          "{{ S.hero_glowne.obraz | absolute_url }}",
+          "{{ P.przyjecia.obraz_glowny | absolute_url }}"
         ],
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "ul. Wyłom 22",
-          "postalCode": "30-364",
-          "addressLocality": "Kraków",
-          "addressRegion": "małopolskie",
+          "streetAddress": {{ F.ulica | jsonify }},
+          "postalCode": {{ F.kod_pocztowy | jsonify }},
+          "addressLocality": {{ F.miasto | jsonify }},
+          "addressRegion": {{ F.wojewodztwo | jsonify }},
           "addressCountry": "PL"
         },
-        "geo": { "@type": "GeoCoordinates", "latitude": 50.0350478, "longitude": 19.9130438 },
-        "areaServed": { "@type": "City", "name": "Kraków" },
-        "hasMap": "https://www.google.com/maps/search/?api=1&query=Caf%C3%A9+Zakrz%C3%B3wek%2C+Wy%C5%82om+22%2C+Krak%C3%B3w",
+        "geo": { "@type": "GeoCoordinates", "latitude": {{ F.szerokosc_geo }}, "longitude": {{ F.dlugosc_geo }} },
+        "areaServed": { "@type": "City", "name": {{ F.miasto | jsonify }} },
+        "hasMap": {{ F.wizytowka_google | jsonify }},
         "openingHoursSpecification": [{
           "@type": "OpeningHoursSpecification",
           "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-          "opens": "09:00",
-          "closes": "19:00"
+          "opens": "{% if F.godziny.otwarcie < 10 %}0{% endif %}{{ F.godziny.otwarcie }}:00",
+          "closes": "{% if F.godziny.zamkniecie < 10 %}0{% endif %}{{ F.godziny.zamkniecie }}:00"
         }],
         "servesCuisine": ["Kawa", "Matcha", "Wypieki"],
         "makesOffer": [{
@@ -125,50 +128,39 @@
           "itemOffered": {
             "@type": "Service",
             "name": "Sala na przyjęcia i wydarzenia",
-            "description": "Duża, klimatyczna sala z widokiem na urodziny i imieniny, imprezy firmowe, spotkania biznesowe, konferencje i warsztaty, baby shower oraz ceremonie zaślubin.",
-            "areaServed": { "@type": "City", "name": "Kraków" },
-            "provider": { "@id": "https://wiksas.github.io/strona01/#cafe" }
+            "description": {{ P.przyjecia.rodzaje | join: ', ' | prepend: 'Duża, klimatyczna sala z widokiem na: ' | append: '.' | jsonify }},
+            "areaServed": { "@type": "City", "name": {{ F.miasto | jsonify }} },
+            "provider": { "@id": "{{ base }}#cafe" }
           }
         }],
-        "sameAs": [
-          "https://www.instagram.com/cafe.zakrzowek/",
-          "https://www.facebook.com/profile.php?id=61556314341629"
-        ]
+        "sameAs": [{{ F.instagram | jsonify }}, {{ F.facebook | jsonify }}]
       },
       {
         "@type": "WebPage",
-        "@id": "https://wiksas.github.io/strona01/#webpage",
-        "url": "https://wiksas.github.io/strona01/",
-        "name": "Kawiarnia nad Zakrzówkiem w Krakowie | Café Zakrzówek",
-        "description": "Kawiarnia z widokiem na zalew Zakrzówek w Krakowie, ul. Wyłom 22. Kawa na wynos na spacer, drożdżówki, croissanty, matcha i sala na przyjęcia. Wpadnij!",
+        "@id": "{{ base }}#webpage",
+        "url": "{{ base }}",
+        "name": {{ F.seo_tytul | jsonify }},
+        "description": {{ F.seo_opis | jsonify }},
         "inLanguage": "pl-PL",
-        "isPartOf": { "@id": "https://wiksas.github.io/strona01/#website" },
-        "about": { "@id": "https://wiksas.github.io/strona01/#cafe" },
+        "isPartOf": { "@id": "{{ base }}#website" },
+        "about": { "@id": "{{ base }}#cafe" },
         "primaryImageOfPage": {
           "@type": "ImageObject",
-          "url": "https://wiksas.github.io/strona01/assets/img/cafe-zakrzowek-krakow-og.jpg",
+          "url": "{{ F.og_obraz | absolute_url }}",
           "width": 1200,
           "height": 630
         }
       },
       {
         "@type": "FAQPage",
-        "@id": "https://wiksas.github.io/strona01/#faq",
-        "isPartOf": { "@id": "https://wiksas.github.io/strona01/#webpage" },
+        "@id": "{{ base }}#faq",
+        "isPartOf": { "@id": "{{ base }}#webpage" },
         "inLanguage": "pl-PL",
         "mainEntity": [
-          { "@type": "Question", "name": "Gdzie dokładnie jest kawiarnia Café Zakrzówek?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Przy ul. Wyłom 22 w Krakowie (Dębniki), tuż nad zalewem Zakrzówek. Przycisk „Prowadź do nas” wyznaczy trasę pieszą w Mapach Google." } },
-          { "@type": "Question", "name": "W jakich godzinach jesteście otwarci?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Codziennie od 9:00 do 19:00." } },
-          { "@type": "Question", "name": "Czy mogę wziąć kawę na wynos na spacer?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Tak. Kawę podajemy na wynos w naszych kubkach, a do tego możesz wziąć coś z witryny." } },
-          { "@type": "Question", "name": "Co można u was zjeść?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Codziennie w witrynie są croissanty wytrawne i kanapki, a do tego drożdżówki: malinianki, a sezonowo jagodzianki i poziomianki. Witryna zmienia się codziennie, a niektóre pozycje chętnie podgrzejemy." } },
-          { "@type": "Question", "name": "Czy można u was zorganizować przyjęcie albo spotkanie firmowe?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Tak. Mamy dużą, klimatyczną salę z widokiem, w której organizujemy urodziny i imieniny, imprezy firmowe, spotkania biznesowe, konferencje i warsztaty, baby shower oraz ceremonie zaślubin. Termin ustalisz pod numerem 795 455 233 lub mailowo: cafe.zakrzowek@gmail.com." } },
-          { "@type": "Question", "name": "Czy w kawiarni są gry planszowe?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Tak, na miejscu są szachy i gry planszowe, a do kawy gazety i magazyny." } }
+          {%- for q in P.pytania.lista %}
+          { "@type": "Question", "name": {{ q.pytanie | jsonify }},
+            "acceptedAnswer": { "@type": "Answer", "text": {{ q.odpowiedz | markdownify | strip_html | strip | jsonify }} } }{% unless forloop.last %},{% endunless %}
+          {%- endfor %}
         ]
       }
     ]
@@ -176,55 +168,14 @@
   </script>
 </head>
 <body>
-  <!-- Sprite: promienie słońca z logo + ikony -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-    <defs>
-      <symbol id="rays" viewBox="0 80 600 260">
-        <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round">
-          <path d="M200.0 330.0L15.0 330.0" pathLength="1"/>
-          <path d="M203.4 304.1L131.0 284.7" pathLength="1"/>
-          <path d="M206.4 282.3L71.0 213.3" pathLength="1"/>
-          <path d="M218.5 259.1L155.9 204.7" pathLength="1"/>
-          <path d="M239.6 240.5L179.2 150.9" pathLength="1"/>
-          <path d="M259.9 230.8L203.4 90.8" pathLength="1"/>
-          <path d="M281.6 225.6L271.9 170.5" pathLength="1"/>
-          <path d="M312.8 225.8L324.5 130.5" pathLength="1"/>
-          <path d="M337.6 232.0L390.3 94.7" pathLength="1"/>
-          <path d="M357.2 238.4L393.8 179.9" pathLength="1"/>
-          <path d="M380.4 255.0L455.0 185.4" pathLength="1"/>
-          <path d="M395.4 279.3L515.4 215.4" pathLength="1"/>
-          <path d="M398.5 299.9L445.4 285.6" pathLength="1"/>
-          <path d="M400.0 330.0L585.0 330.0" pathLength="1"/>
-        </g>
-      </symbol>
-      <symbol id="i-wiosna" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="2.2"/><path d="M12 7.8c-1.6-3.2 1.6-4.6 0-5.3-1.6.7 1.6 2.1 0 5.3zM14.2 10c3.2-1.6 4.6 1.6 5.3 0-.7-1.6-2.1 1.6-5.3 0zM12 12.2c1.6 3.2-1.6 4.6 0 5.3 1.6-.7-1.6-2.1 0-5.3zM9.8 10c-3.2 1.6-4.6-1.6-5.3 0 .7 1.6 2.1-1.6 5.3 0z"/><path d="M12 17.5V22M12 20c-1.5-1.6-3.3-1.8-4.5-1.4M12 20.5c1.5-1.6 3.3-1.8 4.5-1.4"/></g></symbol>
-      <symbol id="i-lato" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></g></symbol>
-      <symbol id="i-jesien" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C4 11 9 5 19 4c.6 9.5-5 15-14 15z"/><path d="M5 19c3-5 6-8 10-10.5M3 21l2-2"/></g></symbol>
-      <symbol id="i-zima" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2.5v19M3.8 7.25l16.4 9.5M3.8 16.75l16.4-9.5"/><path d="M9.5 3.8 12 6l2.5-2.2M9.5 20.2 12 18l2.5 2.2M3.5 10.2l3.2-1-.7-3.3M20.5 13.8l-3.2 1 .7 3.3M6 18.1l.7-3.3-3.2-1M18 5.9l-.7 3.3 3.2 1"/></g></symbol>
-      <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></g></symbol>
-      <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M5 3.5h3.2l1.6 4.2-2 1.3a10.5 10.5 0 0 0 5.2 5.2l1.3-2 4.2 1.6V17a3 3 0 0 1-3 3A15.5 15.5 0 0 1 2 6.5a3 3 0 0 1 3-3z"/></symbol>
-      <symbol id="i-cup" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.3 13a1.5 1.5 0 0 1-1.5 1.3H8.8a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M5 7h14V5.2A1.2 1.2 0 0 0 17.8 4H6.2A1.2 1.2 0 0 0 5 5.2zM7 11h10"/></g></symbol>
-      <symbol id="i-walk" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="1.8"/><path d="m9 21 2.5-6.5L14 17v4M7 12l2.5-4.5h3.5l2 3.5 3 1.5M11.5 14.5l1-5"/></g></symbol>
-      <symbol id="i-ig" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></g></symbol>
-      <symbol id="i-fb" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M14 21v-7.5h2.6l.4-3H14V8.6c0-.9.3-1.5 1.6-1.5H17V4.4A20 20 0 0 0 14.8 4C12.6 4 11 5.4 11 7.9v2.6H8.5v3H11V21"/></symbol>
-      <symbol id="i-star" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z"/></symbol>
-      <symbol id="i-prev" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7"/></symbol>
-      <symbol id="i-next" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></symbol>
-      <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
-      <symbol id="logo" viewBox="0 80 600 340">
-        <use href="#rays" x="0" y="80" width="600" height="260" class="logo-rays"/>
-        <text x="300" y="333" text-anchor="middle" class="logo-cafe">cafe</text>
-        <text x="300" y="408" text-anchor="middle" class="logo-name" textLength="476" lengthAdjust="spacingAndGlyphs">ZAKRZÓWEK</text>
-      </symbol>
-    </defs>
-  </svg>
+  {% include sprite.html %}
 
   <a class="skip" href="#main">Przejdź do treści</a>
   <div class="progress" aria-hidden="true"><span></span></div>
 
   <header class="site-header" id="top">
     <div class="wrap header-inner">
-      <a href="#top" class="brand" aria-label="Café Zakrzówek – strona główna">
+      <a href="#top" class="brand" aria-label="{{ F.nazwa | escape }} – strona główna">
         <svg class="logo" viewBox="0 80 600 340" aria-hidden="true"><use href="#logo"/></svg>
       </a>
 
@@ -238,10 +189,9 @@
       </nav>
 
       <div class="season-switch" role="group" aria-label="Wersja sezonowa strony">
-        <button type="button" data-season-btn="wiosna" aria-label="Wiosna" aria-pressed="false"><svg aria-hidden="true"><use href="#i-wiosna"/></svg></button>
-        <button type="button" data-season-btn="lato" aria-label="Lato" aria-pressed="false"><svg aria-hidden="true"><use href="#i-lato"/></svg></button>
-        <button type="button" data-season-btn="jesien" aria-label="Jesień" aria-pressed="true"><svg aria-hidden="true"><use href="#i-jesien"/></svg></button>
-        <button type="button" data-season-btn="zima" aria-label="Zima" aria-pressed="false"><svg aria-hidden="true"><use href="#i-zima"/></svg></button>
+        {%- for id in ids %}
+        <button type="button" data-season-btn="{{ id }}" aria-label="{{ site.data.sezony[id].nazwa | escape }}" aria-pressed="{% if id == sid %}true{% else %}false{% endif %}"><svg aria-hidden="true"><use href="#i-{{ id }}"/></svg></button>
+        {%- endfor %}
       </div>
 
       <button class="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Otwórz menu">
@@ -257,43 +207,37 @@
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <p class="eyebrow hero-in" style="--d:0">
-            <span class="status" data-open-status><i></i><span>Codziennie 9:00–19:00</span></span>
+            <span class="status" data-open-status><i></i><span>Codziennie {{ godziny }}</span></span>
           </p>
           <h1 id="hero-title" class="hero-title">
-            <span class="kicker hero-label hero-in" style="--d:1">Kawiarnia nad Zakrzówkiem w Krakowie</span>
-            <span class="line hero-in" style="--d:2" data-s="title1">Jesień</span>
-            <span class="line hero-in" style="--d:3" data-s="title2">przy kawie</span>
-            <em class="line hero-in" style="--d:4" data-s="titleItalic">z widokiem na złoty Zakrzówek</em>
+            <span class="kicker hero-label hero-in" style="--d:1">{{ P.start.etykieta_h1 | escape }}</span>
+            <span class="line hero-in" style="--d:2" data-s="tytul1">{{ S.tytul1 | escape }}</span>
+            <span class="line hero-in" style="--d:3" data-s="tytul2">{{ S.tytul2 | escape }}</span>
+            <em class="line hero-in" style="--d:4" data-s="tytul_kursywa">{{ S.tytul_kursywa | escape }}</em>
           </h1>
-          <p class="lead hero-in" style="--d:5" data-s="lead">Kiedy liście wokół zalewu zmieniają kolor, spacer najlepiej kończyć u nas: ciepła kawa, gazetka, partia szachów i coś słodkiego z witryny.</p>
+          <p class="lead hero-in" style="--d:5" data-s="wstep">{{ S.wstep | escape }}</p>
           <div class="cta-row hero-in" style="--d:6">
-            <a class="btn btn-primary" data-directions href="https://www.google.com/maps/dir/?api=1&amp;destination=50.0350478,19.9130438&amp;travelmode=walking" target="_blank" rel="noopener">
-              <svg aria-hidden="true"><use href="#i-walk"/></svg> Prowadź do nas
+            <a class="btn btn-primary" data-directions href="{{ trasa | escape }}" target="_blank" rel="noopener">
+              <svg aria-hidden="true"><use href="#i-walk"/></svg> {{ P.start.przycisk_trasa | escape }}
             </a>
-            <a class="btn btn-ghost" href="#sezon">Co dziś w witrynie?</a>
+            <a class="btn btn-ghost" href="#sezon">{{ P.start.przycisk_witryna | escape }}</a>
           </div>
-          <p class="address hero-in" style="--d:7"><svg aria-hidden="true"><use href="#i-pin"/></svg> ul. Wyłom 22, Kraków-Dębniki · tuż nad zalewem Zakrzówek</p>
+          <p class="address hero-in" style="--d:7"><svg aria-hidden="true"><use href="#i-pin"/></svg> {{ P.start.linia_adresu | escape }}</p>
         </div>
 
         <div class="hero-visual">
           <svg class="hero-rays" aria-hidden="true"><use href="#rays"/></svg>
           <figure class="arch" data-parallax style="--shift:-28px">
-            <img data-hero="main" src="assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem.webp"
-              srcset="assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem-320.webp 320w, assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem.webp 480w"
-              sizes="(max-width: 760px) 60vw, 420px" width="480" height="640" fetchpriority="high"
-              alt="Malinianki z kremem pistacjowym na drewnianej desce, w tle zalew Zakrzówek">
+            {% include img.html src=S.hero_glowne.obraz alt=S.hero_glowne.alt sizes="(max-width: 760px) 60vw, 420px" attrs='data-hero="main" fetchpriority="high"' %}
           </figure>
           <figure class="polaroid" data-parallax style="--shift:36px">
-            <img data-hero="second" src="assets/img/szachy-i-kawa-w-kawiarni-krakow.webp"
-              srcset="assets/img/szachy-i-kawa-w-kawiarni-krakow-320.webp 320w, assets/img/szachy-i-kawa-w-kawiarni-krakow.webp 640w"
-              sizes="(max-width: 760px) 30vw, 200px" width="640" height="478"
-              alt="Partia szachów przy cappuccino i matcha latte w Café Zakrzówek">
+            {% include img.html src=S.hero_polaroid.obraz alt=S.hero_polaroid.alt sizes="(max-width: 760px) 30vw, 200px" attrs='data-hero="second"' %}
           </figure>
           <script>CZ_setHero(document.documentElement.getAttribute('data-season'));</script>
           <svg class="badge" viewBox="0 0 200 200" aria-hidden="true">
             <defs><path id="badge-circle" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0"/></defs>
             <circle cx="100" cy="100" r="96" class="badge-bg"/>
-            <text><textPath href="#badge-circle" textLength="458" lengthAdjust="spacing" data-s="badge">ciepła kawa ☼ na wynos ☼ ciepła kawa ☼ na wynos ☼ </textPath></text>
+            <text><textPath href="#badge-circle" textLength="458" lengthAdjust="spacing" data-s="plakietka">{{ S.plakietka | escape }} </textPath></text>
             <use href="#i-cup" x="72" y="72" width="56" height="56" class="badge-icon"/>
           </svg>
         </div>
@@ -304,8 +248,9 @@
     <!-- PASEK HASEŁ -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee-track" data-marquee>
-        <div class="marquee-group"><span>ciepła kawa</span><span>gry planszowe</span><span>malinianki</span><span>gazetka do kawy</span><span>jesień nad Zakrzówkiem</span><span>na wynos</span></div>
-        <div class="marquee-group"><span>ciepła kawa</span><span>gry planszowe</span><span>malinianki</span><span>gazetka do kawy</span><span>jesień nad Zakrzówkiem</span><span>na wynos</span></div>
+        {%- for n in (1..2) %}
+        <div class="marquee-group">{% for h in S.hasla %}<span>{{ h | escape }}</span>{% endfor %}{% for h in S.hasla %}<span>{{ h | escape }}</span>{% endfor %}</div>
+        {%- endfor %}
       </div>
     </div>
 
@@ -313,37 +258,28 @@
     <section class="walker" id="spacer" aria-labelledby="walker-title">
       <div class="wrap walker-grid">
         <div class="walker-copy">
-          <p class="kicker" data-reveal>Jesteś na spacerze nad Zakrzówkiem?</p>
-          <h2 id="walker-title" class="h2" data-split data-s="walkerTitle">Chłodniej na spacerze? Rozgrzej się u nas.</h2>
-          <p class="body" data-reveal data-s="walkerLead">Jesteśmy przy ul. Wyłom 22, tuż przy ścieżkach wokół zalewu. Ciepła kawa na wynos w drogę albo stolik w środku z widokiem.</p>
+          <p class="kicker" data-reveal>{{ P.spacer.nadtytul | escape }}</p>
+          <h2 id="walker-title" class="h2" data-split data-s="spacer_tytul">{{ S.spacer_tytul | escape }}</h2>
+          <p class="body" data-reveal data-s="spacer_wstep">{{ S.spacer_wstep | escape }}</p>
 
           <ol class="steps">
-            <li data-reveal="left" style="--i:0">
-              <span class="step-no">01</span>
-              <div><h3>Zejdź na chwilę ze ścieżki</h3><p>Kawiarnia jest tuż nad Zakrzówkiem – bez nadkładania drogi.</p></div>
+            {%- for k in P.spacer.kroki %}
+            <li data-reveal="left" style="--i:{{ forloop.index0 }}">
+              <span class="step-no">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+              <div><h3>{{ k.tytul | escape }}</h3><p>{{ k.tekst | escape }}</p></div>
             </li>
-            <li data-reveal="left" style="--i:1">
-              <span class="step-no">02</span>
-              <div><h3>Weź kawę na wynos</h3><p>W naszym kubku z logo, do tego drożdżówka albo croissant z witryny.</p></div>
-            </li>
-            <li data-reveal="left" style="--i:2">
-              <span class="step-no">03</span>
-              <div><h3>…albo zostań na widoku</h3><p>Usiądź przy stoliku i popatrz na turkusową wodę i zieleń wokół zalewu.</p></div>
-            </li>
+            {%- endfor %}
           </ol>
 
           <div class="distance" data-reveal>
-            <button class="btn btn-primary" type="button" data-locate><svg aria-hidden="true"><use href="#i-walk"/></svg> Ile mam do was?</button>
-            <p class="distance-out" data-distance aria-live="polite">Sprawdzimy, jak daleko jesteś (lokalizacja nie jest nigdzie zapisywana).</p>
+            <button class="btn btn-primary" type="button" data-locate><svg aria-hidden="true"><use href="#i-walk"/></svg> {{ P.spacer.przycisk_odleglosc | escape }}</button>
+            <p class="distance-out" data-distance aria-live="polite">{{ P.spacer.notka_odleglosc | escape }}</p>
           </div>
         </div>
 
         <div class="walker-visual">
           <figure class="walker-photo" data-reveal="clip">
-            <img data-s-img="walkerImg" src="assets/img/baristki-cafe-zakrzowek-krakow.webp"
-              srcset="assets/img/baristki-cafe-zakrzowek-krakow-320.webp 320w, assets/img/baristki-cafe-zakrzowek-krakow.webp 480w"
-              sizes="(max-width: 760px) 64vw, 280px" width="480" height="640" loading="lazy"
-              alt="Baristki Café Zakrzówek z kawą i gazetą w kawiarni">
+            {% include img.html src=S.spacer_obraz.obraz alt=S.spacer_obraz.alt sizes="(max-width: 760px) 64vw, 280px" lazy=true attrs='data-s-img="spacer_obraz"' %}
           </figure>
           <svg class="trail" viewBox="0 0 400 560" aria-hidden="true">
             <path class="trail-bg" d="M40 520 C 120 470, 40 400, 120 350 S 300 320, 260 240 S 120 160, 210 100 S 330 70, 340 50"/>
@@ -361,96 +297,53 @@
     <section class="seasonal" id="sezon" aria-labelledby="seasonal-title">
       <div class="wrap">
         <header class="section-head">
-          <p class="kicker" data-reveal data-s="seasonKicker">Oferta jesienna</p>
-          <h2 id="seasonal-title" class="h2" data-split data-s="seasonTitle">Jesień u nas</h2>
-          <p class="body" data-reveal data-s="seasonLead">Dłuższe popołudnia przy stoliku – z kawą, czymś słodkim i grą planszową.</p>
+          <p class="kicker" data-reveal data-s="oferta_nadtytul">{{ S.oferta_nadtytul | escape }}</p>
+          <h2 id="seasonal-title" class="h2" data-split data-s="oferta_tytul">{{ S.oferta_tytul | escape }}</h2>
+          <p class="body" data-reveal data-s="oferta_wstep">{{ S.oferta_wstep | escape }}</p>
         </header>
         <div class="cards" data-highlights>
-          <article class="card" data-reveal style="--i:0">
+          {%- for k in S.karty %}
+          <article class="card" data-reveal style="--i:{{ forloop.index0 }}">
             <div class="card-img">
-              <img src="assets/img/szachy-i-kawa-w-kawiarni-krakow.webp" srcset="assets/img/szachy-i-kawa-w-kawiarni-krakow-320.webp 320w, assets/img/szachy-i-kawa-w-kawiarni-krakow.webp 640w" sizes="(max-width: 760px) 78vw, 380px" width="640" height="478" loading="lazy" alt="Goście grający w szachy przy kawie w Café Zakrzówek">
-              <span class="tag">na miejscu</span>
+              {% include img.html src=k.obraz alt=k.alt sizes="(max-width: 760px) 78vw, 380px" lazy=true %}
+              <span class="tag">{{ k.etykieta | escape }}</span>
             </div>
-            <div class="card-body"><h3>Gry planszowe i szachy</h3><p>Przestrzeń do rozrywki i odpoczynku – zostań na partię.</p></div>
+            <div class="card-body"><h3>{{ k.tytul | escape }}</h3><p>{{ k.tekst | escape }}</p></div>
           </article>
-          <article class="card" data-reveal style="--i:1">
-            <div class="card-img">
-              <img src="assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp" srcset="assets/img/drozdzowki-z-owocami-nad-zakrzowkiem-320.webp 320w, assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp 480w" sizes="(max-width: 760px) 78vw, 380px" width="480" height="640" loading="lazy" alt="Drożdżówki z kruszonką i owocami na drewnianej desce, w tle zieleń nad Zakrzówkiem">
-              <span class="tag">klasyk</span>
-            </div>
-            <div class="card-body"><h3>Malinianki</h3><p>Maliny zawinięte w ciasto drożdżowe, przykryte kruszonką.</p></div>
-          </article>
-          <article class="card" data-reveal style="--i:2">
-            <div class="card-img">
-              <img src="assets/img/baristki-cafe-zakrzowek-krakow.webp" srcset="assets/img/baristki-cafe-zakrzowek-krakow-320.webp 320w, assets/img/baristki-cafe-zakrzowek-krakow.webp 480w" sizes="(max-width: 760px) 78vw, 380px" width="480" height="640" loading="lazy" alt="Baristki Café Zakrzówek z kawą i gazetą w kawiarni">
-              <span class="tag">do kawy</span>
-            </div>
-            <div class="card-body"><h3>Kawa i gazetka</h3><p>Kawa, gazetka i nasze świetne baristki gotowe do pracy.</p></div>
-          </article>
+          {%- endfor %}
         </div>
       </div>
     </section>
 
     <!-- GALERIA -->
+    {%- assign G = P.galeria %}
     <section class="gallery" aria-labelledby="gallery-title">
       <div class="wrap gallery-head">
         <div>
-          <p class="kicker" data-reveal>Widok, który zatrzymuje</p>
-          <h2 id="gallery-title" class="h2" data-reveal>Widok na Zakrzówek z naszego Instagrama</h2>
+          <p class="kicker" data-reveal>{{ G.nadtytul | escape }}</p>
+          <h2 id="gallery-title" class="h2" data-reveal>{{ G.tytul | escape }}</h2>
         </div>
         <div class="gallery-nav" data-gallery-nav hidden>
           <button type="button" class="round-btn" data-gallery-prev aria-label="Poprzednie zdjęcia"><svg aria-hidden="true"><use href="#i-prev"/></svg></button>
-          <span class="gallery-count" data-gallery-count aria-live="polite">1 / 7</span>
+          <span class="gallery-count" data-gallery-count aria-live="polite">1 / {{ G.zdjecia | size }}</span>
           <button type="button" class="round-btn" data-gallery-next aria-label="Następne zdjęcia"><svg aria-hidden="true"><use href="#i-next"/></svg></button>
         </div>
       </div>
       <ul class="gallery-track" data-gallery tabindex="0" aria-label="Zdjęcia z kawiarni – przewijana galeria">
-        <li class="g-item"><figure>
-          <button type="button" class="g-open" data-lightbox aria-label="Powiększ zdjęcie: drożdżówki z owocami nad Zakrzówkiem">
-            <img src="assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp" srcset="assets/img/drozdzowki-z-owocami-nad-zakrzowkiem-320.webp 320w, assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp 480w" sizes="(max-width: 760px) 70vw, 390px" width="480" height="640" loading="lazy" alt="Drożdżówki z kruszonką i owocami na drewnianej desce, w tle drzewa i zalew Zakrzówek">
+        {%- for z in G.zdjecia %}
+        <li class="g-item{% if z.szerokie %} g-wide{% endif %}"><figure>
+          <button type="button" class="g-open" data-lightbox aria-label="Powiększ zdjęcie: {{ z.podpis | default: z.alt | escape }}">
+            {% include img.html src=z.obraz alt=z.alt sizes="(max-width: 760px) 70vw, 520px" lazy=true %}
           </button>
-          <figcaption>Drożdżówka, słońce i widok, który zatrzymuje lato na dłużej</figcaption>
+          {%- if z.podpis %}
+          <figcaption>{{ z.podpis | escape }}</figcaption>
+          {%- endif %}
         </figure></li>
-        <li class="g-item"><figure>
-          <button type="button" class="g-open" data-lightbox aria-label="Powiększ zdjęcie: Frugoo Matcha z widokiem na zalew">
-            <img src="assets/img/frugoo-matcha-widok-na-zalew-zakrzowek.webp" srcset="assets/img/frugoo-matcha-widok-na-zalew-zakrzowek-320.webp 320w, assets/img/frugoo-matcha-widok-na-zalew-zakrzowek.webp 480w" sizes="(max-width: 760px) 70vw, 390px" width="480" height="640" loading="lazy" alt="Matcha wlewana do szklanki z lemoniadą marakuja, w tle zalew Zakrzówek">
-          </button>
-          <figcaption>Frugoo Matcha – lemoniada marakuja i matcha na upalne dni</figcaption>
-        </figure></li>
-        <li class="g-item g-wide"><figure>
-          <button type="button" class="g-open" data-lightbox aria-label="Powiększ zdjęcie: szachy przy kawie">
-            <img src="assets/img/szachy-i-kawa-w-kawiarni-krakow.webp" srcset="assets/img/szachy-i-kawa-w-kawiarni-krakow-320.webp 320w, assets/img/szachy-i-kawa-w-kawiarni-krakow.webp 640w" sizes="(max-width: 760px) 70vw, 520px" width="640" height="478" loading="lazy" alt="Partia szachów przy cappuccino i matcha latte w Café Zakrzówek">
-          </button>
-          <figcaption>Przestrzeń do rozrywki i odpoczynku</figcaption>
-        </figure></li>
-        <li class="g-item"><figure>
-          <button type="button" class="g-open" data-lightbox aria-label="Powiększ zdjęcie: poziomianki nad zalewem">
-            <img src="assets/img/poziomianki-nad-zalewem-zakrzowek.webp" srcset="assets/img/poziomianki-nad-zalewem-zakrzowek-320.webp 320w, assets/img/poziomianki-nad-zalewem-zakrzowek.webp 480w" sizes="(max-width: 760px) 70vw, 390px" width="480" height="640" loading="lazy" alt="Drożdżówki z truskawkami na drewnianej desce, w tle turkusowy zalew Zakrzówek">
-          </button>
-          <figcaption>Poziomianki – edycja mocno limitowana</figcaption>
-        </figure></li>
-        <li class="g-item"><figure>
-          <button type="button" class="g-open" data-lightbox aria-label="Powiększ zdjęcie: baristki Café Zakrzówek">
-            <img src="assets/img/baristki-cafe-zakrzowek-krakow.webp" srcset="assets/img/baristki-cafe-zakrzowek-krakow-320.webp 320w, assets/img/baristki-cafe-zakrzowek-krakow.webp 480w" sizes="(max-width: 760px) 70vw, 390px" width="480" height="640" loading="lazy" alt="Trzy baristki Café Zakrzówek z kawą i gazetą przy barze">
-          </button>
-          <figcaption>Kawa, gazetka i nasze świetne baristki</figcaption>
-        </figure></li>
-        <li class="g-item g-wide"><figure>
-          <button type="button" class="g-open" data-lightbox aria-label="Powiększ zdjęcie: croissanty wytrawne">
-            <img src="assets/img/croissanty-wytrawne-cafe-zakrzowek.webp" srcset="assets/img/croissanty-wytrawne-cafe-zakrzowek-320.webp 320w, assets/img/croissanty-wytrawne-cafe-zakrzowek.webp 640w" sizes="(max-width: 760px) 70vw, 520px" width="640" height="640" loading="lazy" alt="Croissanty wytrawne z pomidorem, mozzarellą i warzywami na drewnianej desce">
-          </button>
-          <figcaption>Croissanty wytrawne – codziennie w witrynie</figcaption>
-        </figure></li>
-        <li class="g-item"><figure>
-          <button type="button" class="g-open" data-lightbox aria-label="Powiększ zdjęcie: malinianki z kremem pistacjowym">
-            <img src="assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem.webp" srcset="assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem-320.webp 320w, assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem.webp 480w" sizes="(max-width: 760px) 70vw, 390px" width="480" height="640" loading="lazy" alt="Malinianki z kremem pistacjowym i malinami, w tle zalew Zakrzówek">
-          </button>
-          <figcaption>Malinianki z kremem pistacjowym</figcaption>
-        </figure></li>
+        {%- endfor %}
         <li class="g-item g-cta">
-          <a href="https://www.instagram.com/cafe.zakrzowek/" target="_blank" rel="noopener">
+          <a href="{{ F.instagram }}" target="_blank" rel="noopener">
             <svg aria-hidden="true"><use href="#i-ig"/></svg>
-            <span>@cafe.zakrzowek</span>
+            <span>@{{ F.instagram | split: 'instagram.com/' | last | remove: '/' }}</span>
             <small>więcej zdjęć na Instagramie →</small>
           </a>
         </li>
@@ -459,165 +352,149 @@
     </section>
 
     <!-- MENU -->
+    {%- assign M = P.menu %}
     <section class="menu" id="menu" aria-labelledby="menu-title">
       <div class="wrap">
         <header class="section-head">
-          <p class="kicker" data-reveal>Karta</p>
-          <h2 id="menu-title" class="h2" data-reveal>Menu kawiarni: kawa, matcha i wypieki</h2>
-          <p class="body" data-reveal>Witryna zmienia się codziennie – zawsze znajdziesz w niej coś innego. Niektóre pozycje chętnie podgrzejemy.</p>
+          <p class="kicker" data-reveal>{{ M.nadtytul | escape }}</p>
+          <h2 id="menu-title" class="h2" data-reveal>{{ M.tytul | escape }}</h2>
+          <p class="body" data-reveal>{{ M.wstep | escape }}</p>
         </header>
 
         <div class="tabs" role="tablist" aria-label="Kategorie menu" data-tabs hidden></div>
         <div class="tab-panels" data-panels>
-          <div class="panel" id="panel-sezon" data-panel-label="Sezonowo · Jesień">
-            <h3 class="panel-title" data-s="menuTitle">Oferta sezonowa · Jesień</h3>
+          <div class="panel" id="panel-sezon" data-panel-label="Sezonowo · {{ S.nazwa | escape }}">
+            <h3 class="panel-title">Oferta sezonowa · {{ S.nazwa | escape }}</h3>
             <ul class="items" data-seasonal-menu>
-              <li class="item"><span class="item-name">Malinianki</span><p>Klasyk: maliny w cieście drożdżowym z kruszonką.</p></li>
-              <li class="item"><span class="item-name">Croissanty na ciepło</span><p>Wybrane pozycje z witryny chętnie podgrzejemy.</p></li>
-              <li class="item"><span class="item-name">Napoje ciepłe</span><p>Na rozgrzanie po spacerze.</p></li>
+              {%- for it in S.menu_sezonowe %}
+              <li class="item"><span class="item-name">{{ it.nazwa | escape }}{% if it.znaczek %}<span class="badge-s">{{ it.znaczek | escape }}</span>{% endif %}</span>{% if it.opis %}<p>{{ it.opis | escape }}</p>{% endif %}</li>
+              {%- endfor %}
             </ul>
           </div>
-          <div class="panel" id="panel-witryna" data-panel-label="Z witryny">
-            <h3 class="panel-title">Z witryny – codziennie</h3>
+          <div class="panel" id="panel-witryna" data-panel-label="{{ M.witryna_zakladka | escape }}">
+            <h3 class="panel-title">{{ M.witryna_tytul | escape }}</h3>
             <ul class="items">
-              <li class="item"><span class="item-name">Croissant z boczkiem i jajkiem</span></li>
-              <li class="item"><span class="item-name">Croissant caprese</span></li>
-              <li class="item"><span class="item-name">Croissant z hummusem</span><p>i grillowanymi warzywami</p></li>
-              <li class="item"><span class="item-name">Croissant z guacamole i jajkiem</span></li>
-              <li class="item"><span class="item-name">Kanapka z pastą jajeczną</span></li>
-              <li class="item"><span class="item-name">Kanapka z twarożkiem</span></li>
-              <li class="item"><span class="item-name">Kanapka z szynką i serem</span></li>
-              <li class="item"><span class="item-name">Kanapka z pasztetem</span></li>
-              <li class="item"><span class="item-name">Drożdżówki</span><p>malinianki, a sezonowo jagodzianki i poziomianki</p></li>
+              {%- for it in M.witryna %}
+              <li class="item"><span class="item-name">{{ it.nazwa | escape }}</span>{% if it.opis %}<p>{{ it.opis | escape }}</p>{% endif %}</li>
+              {%- endfor %}
             </ul>
           </div>
-          <div class="panel" id="panel-napoje" data-panel-label="Kawa i matcha">
-            <h3 class="panel-title">Kawa i matcha</h3>
+          <div class="panel" id="panel-napoje" data-panel-label="{{ M.napoje_zakladka | escape }}">
+            <h3 class="panel-title">{{ M.napoje_tytul | escape }}</h3>
             <ul class="items">
-              <li class="item"><span class="item-name">Cappuccino</span></li>
-              <li class="item"><span class="item-name">Iced latte</span></li>
-              <li class="item"><span class="item-name">Matcha latte</span></li>
-              <li class="item"><span class="item-name">Frugoo Matcha</span><p>lemoniada marakuja + matcha</p></li>
+              {%- for it in M.napoje %}
+              <li class="item"><span class="item-name">{{ it.nazwa | escape }}</span>{% if it.opis %}<p>{{ it.opis | escape }}</p>{% endif %}</li>
+              {%- endfor %}
             </ul>
-            <p class="menu-note">Pełna karta napojów – kawy ciepłe i zimne, matcha, napoje ciepłe i zimne – jest w wyróżnionych relacjach na <a href="https://www.instagram.com/cafe.zakrzowek/" target="_blank" rel="noopener">naszym Instagramie</a> i na miejscu.</p>
+            {%- if M.napoje_notka %}
+            <p class="menu-note">{{ M.napoje_notka | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+            {%- endif %}
           </div>
         </div>
       </div>
     </section>
 
     <!-- PRZESTRZEŃ -->
+    {%- assign X = P.przestrzen %}
     <section class="space" aria-labelledby="space-title">
       <div class="wrap space-grid">
         <figure class="space-photo" data-reveal="clip">
-          <img src="assets/img/szachy-i-kawa-w-kawiarni-krakow.webp" srcset="assets/img/szachy-i-kawa-w-kawiarni-krakow-320.webp 320w, assets/img/szachy-i-kawa-w-kawiarni-krakow.webp 640w" sizes="(max-width: 920px) 92vw, 540px" width="640" height="478" loading="lazy" alt="Goście grający w szachy przy kawie w Café Zakrzówek">
+          {% include img.html src=X.obraz alt=X.obraz_alt sizes="(max-width: 920px) 92vw, 540px" lazy=true %}
         </figure>
         <div>
-          <p class="kicker" data-reveal>Nie tylko na chwilę</p>
-          <h2 id="space-title" class="h2" data-reveal>Przestrzeń do odpoczynku i gier planszowych</h2>
+          <p class="kicker" data-reveal>{{ X.nadtytul | escape }}</p>
+          <h2 id="space-title" class="h2" data-reveal>{{ X.tytul | escape }}</h2>
           <ul class="ticks">
-            <li data-reveal="left" style="--i:0">Gry planszowe i szachy na miejscu</li>
-            <li data-reveal="left" style="--i:1">Gazety i magazyny do kawy</li>
-            <li data-reveal="left" style="--i:2">Duże okna i widok na zieleń wokół zalewu</li>
-            <li data-reveal="left" style="--i:3">Stoliki w środku i na zewnątrz</li>
-            <li data-reveal="left" style="--i:4">Klimatyczne miejsce na sesję zdjęciową</li>
+            {%- for p in X.punkty %}
+            <li data-reveal="left" style="--i:{{ forloop.index0 }}">{{ p | escape }}</li>
+            {%- endfor %}
           </ul>
         </div>
       </div>
     </section>
 
     <!-- PRZYJĘCIA -->
+    {%- assign E = P.przyjecia %}
     <section class="events" id="przyjecia" aria-labelledby="events-title">
       <div class="wrap events-grid">
         <div class="events-copy">
-          <p class="kicker" data-reveal>Zaplanuj swoje wydarzenie u nas</p>
-          <h2 id="events-title" class="h2" data-reveal>Sala na przyjęcia w Krakowie z widokiem na Zakrzówek</h2>
-          <p class="body" data-reveal>Duża, klimatyczna sala z pięknym widokiem w kawiarni przy ul. Wyłom 22. Organizujemy:</p>
+          <p class="kicker" data-reveal>{{ E.nadtytul | escape }}</p>
+          <h2 id="events-title" class="h2" data-reveal>{{ E.tytul | escape }}</h2>
+          <p class="body" data-reveal>{{ E.wstep | escape }}</p>
           <ul class="chips" data-reveal>
-            <li>urodziny i imieniny</li>
-            <li>imprezy firmowe</li>
-            <li>spotkania biznesowe</li>
-            <li>konferencje i warsztaty</li>
-            <li>baby shower</li>
-            <li>ceremonie zaślubin</li>
+            {%- for r in E.rodzaje %}
+            <li>{{ r | escape }}</li>
+            {%- endfor %}
           </ul>
-          <p class="body" data-reveal>Organizujemy też spotkania z gośćmi – np. wieczory podróżnicze. Śledź nasz Instagram, żeby nie przegapić kolejnego.</p>
+          {%- if E.tekst_dodatkowy %}
+          <p class="body" data-reveal>{{ E.tekst_dodatkowy | escape }}</p>
+          {%- endif %}
           <div class="cta-row" data-reveal>
-            <a class="btn btn-primary" href="tel:+48795455233"><svg aria-hidden="true"><use href="#i-phone"/></svg> Zadzwoń: 795 455 233</a>
-            <a class="btn btn-ghost" href="mailto:cafe.zakrzowek@gmail.com?subject=Rezerwacja%20sali">Napisz w sprawie sali</a>
+            <a class="btn btn-primary" href="tel:{{ tel_link }}"><svg aria-hidden="true"><use href="#i-phone"/></svg> Zadzwoń: {{ F.telefon | escape }}</a>
+            <a class="btn btn-ghost" href="mailto:{{ F.email }}?subject=Rezerwacja%20sali">{{ E.przycisk_mail | escape }}</a>
           </div>
         </div>
         <div class="events-visual">
           <figure class="ev-main" data-reveal="clip" data-parallax style="--shift:-18px">
-            <img src="assets/img/sala-na-przyjecia-cafe-zakrzowek-krakow.webp" srcset="assets/img/sala-na-przyjecia-cafe-zakrzowek-krakow-320.webp 320w, assets/img/sala-na-przyjecia-cafe-zakrzowek-krakow.webp 481w" sizes="(max-width: 920px) 62vw, 340px" width="481" height="640" loading="lazy" alt="Sala na przyjęcia w Café Zakrzówek: stoły z białymi obrusami, światełka i duże okna">
+            {% include img.html src=E.obraz_glowny alt=E.obraz_glowny_alt sizes="(max-width: 920px) 62vw, 340px" lazy=true %}
           </figure>
+          {%- if E.obraz_boczny %}
           <figure class="ev-side" data-reveal="scale" data-parallax style="--shift:24px">
-            <img src="assets/img/spotkanie-podroznicze-cafe-zakrzowek.webp" srcset="assets/img/spotkanie-podroznicze-cafe-zakrzowek-320.webp 320w, assets/img/spotkanie-podroznicze-cafe-zakrzowek.webp 480w" sizes="(max-width: 920px) 42vw, 230px" width="480" height="640" loading="lazy" alt="Plakat spotkania podróżniczego z Ludwikiem Pisarskim w Café Zakrzówek">
-            <figcaption>Było u nas: spotkanie podróżnicze</figcaption>
+            {% include img.html src=E.obraz_boczny alt=E.obraz_boczny_alt sizes="(max-width: 920px) 42vw, 230px" lazy=true %}
+            {%- if E.obraz_boczny_podpis %}
+            <figcaption>{{ E.obraz_boczny_podpis | escape }}</figcaption>
+            {%- endif %}
           </figure>
+          {%- endif %}
         </div>
       </div>
     </section>
 
     <!-- PYTANIA -->
+    {%- assign Q = P.pytania %}
     <section class="faq" id="pytania" aria-labelledby="faq-title">
       <div class="wrap faq-grid">
         <header class="section-head">
-          <p class="kicker" data-reveal>Pytania</p>
-          <h2 id="faq-title" class="h2" data-reveal>Najczęstsze pytania o Café Zakrzówek</h2>
+          <p class="kicker" data-reveal>{{ Q.nadtytul | escape }}</p>
+          <h2 id="faq-title" class="h2" data-reveal>{{ Q.tytul | escape }}</h2>
         </header>
         <div class="faq-list">
+          {%- for q in Q.lista %}
           <details data-reveal>
-            <summary><h3>Gdzie dokładnie jest kawiarnia Café Zakrzówek?</h3></summary>
-            <p>Przy ul. Wyłom 22 w Krakowie (Dębniki), tuż nad zalewem Zakrzówek. Przycisk „Prowadź do nas” wyznaczy trasę pieszą w Mapach Google.</p>
+            <summary><h3>{{ q.pytanie | escape }}</h3></summary>
+            {{ q.odpowiedz | markdownify }}
           </details>
-          <details data-reveal>
-            <summary><h3>W jakich godzinach jesteście otwarci?</h3></summary>
-            <p>Codziennie od 9:00 do 19:00.</p>
-          </details>
-          <details data-reveal>
-            <summary><h3>Czy mogę wziąć kawę na wynos na spacer?</h3></summary>
-            <p>Tak. Kawę podajemy na wynos w naszych kubkach, a do tego możesz wziąć coś z witryny.</p>
-          </details>
-          <details data-reveal>
-            <summary><h3>Co można u was zjeść?</h3></summary>
-            <p>Codziennie w witrynie są croissanty wytrawne i kanapki, a do tego drożdżówki: malinianki, a sezonowo jagodzianki i poziomianki. Witryna zmienia się codziennie, a niektóre pozycje chętnie podgrzejemy.</p>
-          </details>
-          <details data-reveal>
-            <summary><h3>Czy można u was zorganizować przyjęcie albo spotkanie firmowe?</h3></summary>
-            <p>Tak. Mamy dużą, klimatyczną salę z widokiem, w której organizujemy urodziny i imieniny, imprezy firmowe, spotkania biznesowe, konferencje i warsztaty, baby shower oraz ceremonie zaślubin. Termin ustalisz pod numerem <a href="tel:+48795455233">795 455 233</a> lub mailowo: <a href="mailto:cafe.zakrzowek@gmail.com">cafe.zakrzowek@gmail.com</a>.</p>
-          </details>
-          <details data-reveal>
-            <summary><h3>Czy w kawiarni są gry planszowe?</h3></summary>
-            <p>Tak, na miejscu są szachy i gry planszowe, a do kawy gazety i magazyny.</p>
-          </details>
+          {%- endfor %}
         </div>
       </div>
     </section>
 
     <!-- KONTAKT -->
+    {%- assign K = P.kontakt %}
     <section class="visit" id="kontakt" aria-labelledby="visit-title">
       <svg class="sunrise" aria-hidden="true"><use href="#rays"/></svg>
       <div class="wrap visit-grid">
         <div class="visit-copy">
-          <p class="kicker" data-reveal>Dojazd i godziny</p>
-          <h2 id="visit-title" class="h2" data-reveal>Dojazd do kawiarni: ul. Wyłom 22, Kraków</h2>
+          <p class="kicker" data-reveal>{{ K.nadtytul | escape }}</p>
+          <h2 id="visit-title" class="h2" data-reveal>{{ K.tytul | escape }}</h2>
           <dl class="facts">
-            <div data-reveal style="--i:0"><dt>Adres</dt><dd>ul. Wyłom 22<br>30-364 Kraków (Dębniki), nad zalewem Zakrzówek</dd></div>
-            <div data-reveal style="--i:1"><dt>Otwarte</dt><dd>codziennie <span data-hours>9:00–19:00</span><br><span class="status" data-open-status><i></i><span></span></span></dd></div>
-            <div data-reveal style="--i:2"><dt>Telefon</dt><dd><a class="tap" href="tel:+48795455233">795 455 233</a></dd></div>
-            <div data-reveal style="--i:3"><dt>E-mail</dt><dd><a class="tap" href="mailto:cafe.zakrzowek@gmail.com">cafe.zakrzowek@gmail.com</a></dd></div>
+            <div data-reveal style="--i:0"><dt>Adres</dt><dd>{{ F.ulica | escape }}<br>{{ F.kod_pocztowy }} {{ F.miasto | escape }} ({{ F.dzielnica | escape }}){% if K.dopisek_adresu %}, {{ K.dopisek_adresu | escape }}{% endif %}</dd></div>
+            <div data-reveal style="--i:1"><dt>Otwarte</dt><dd>codziennie <span data-hours>{{ godziny }}</span><br><span class="status" data-open-status><i></i><span></span></span></dd></div>
+            <div data-reveal style="--i:2"><dt>Telefon</dt><dd><a class="tap" href="tel:{{ tel_link }}">{{ F.telefon | escape }}</a></dd></div>
+            <div data-reveal style="--i:3"><dt>E-mail</dt><dd><a class="tap" href="mailto:{{ F.email }}">{{ F.email | escape }}</a></dd></div>
           </dl>
           <div class="cta-row" data-reveal>
-            <a class="btn btn-primary" data-directions href="https://www.google.com/maps/dir/?api=1&amp;destination=50.0350478,19.9130438&amp;travelmode=walking" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-walk"/></svg> Wyznacz trasę pieszo</a>
-            <a class="btn btn-ghost icon-only" href="https://www.instagram.com/cafe.zakrzowek/" target="_blank" rel="noopener" aria-label="Café Zakrzówek na Instagramie"><svg aria-hidden="true"><use href="#i-ig"/></svg></a>
-            <a class="btn btn-ghost icon-only" href="https://www.facebook.com/profile.php?id=61556314341629" target="_blank" rel="noopener" aria-label="Café Zakrzówek na Facebooku"><svg aria-hidden="true"><use href="#i-fb"/></svg></a>
+            <a class="btn btn-primary" data-directions href="{{ trasa | escape }}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-walk"/></svg> {{ K.przycisk_trasa | escape }}</a>
+            <a class="btn btn-ghost icon-only" href="{{ F.instagram }}" target="_blank" rel="noopener" aria-label="{{ F.nazwa | escape }} na Instagramie"><svg aria-hidden="true"><use href="#i-ig"/></svg></a>
+            <a class="btn btn-ghost icon-only" href="{{ F.facebook }}" target="_blank" rel="noopener" aria-label="{{ F.nazwa | escape }} na Facebooku"><svg aria-hidden="true"><use href="#i-fb"/></svg></a>
           </div>
         </div>
-        <div class="map" data-reveal="scale" data-map>
-          <img src="assets/img/mapa-dojazdu-cafe-zakrzowek-wylom-22.webp" srcset="assets/img/mapa-dojazdu-cafe-zakrzowek-wylom-22-480.webp 480w, assets/img/mapa-dojazdu-cafe-zakrzowek-wylom-22.webp 960w" sizes="(max-width: 920px) 92vw, 620px" width="960" height="720" loading="lazy" alt="Mapa okolicy zalewu Zakrzówek w Krakowie z zaznaczoną kawiarnią przy ul. Wyłom 22, na wschodnim brzegu zalewu">
+        <div class="map" data-reveal="scale" data-map data-map-query="{{ F.nazwa | append: ', ' | append: F.ulica | append: ', ' | append: F.miasto | escape }}">
+          {%- assign mapa_small = K.mapa | replace: '.webp', '-480.webp' %}
+          <img src="{{ K.mapa | relative_url }}" srcset="{{ mapa_small | relative_url }} 480w, {{ K.mapa | relative_url }} 960w" sizes="(max-width: 920px) 92vw, 620px" width="960" height="720" loading="lazy" alt="{{ K.mapa_alt | escape }}">
           <div class="map-cta">
             <button type="button" class="btn btn-primary" data-map-load><svg aria-hidden="true"><use href="#i-pin"/></svg> Pokaż mapę Google</button>
-            <a class="map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Caf%C3%A9+Zakrz%C3%B3wek%2C+Wy%C5%82om+22%2C+Krak%C3%B3w" target="_blank" rel="noopener">Otwórz w Mapach Google</a>
+            <a class="map-link" href="{{ F.wizytowka_google | escape }}" target="_blank" rel="noopener">Otwórz w Mapach Google</a>
           </div>
         </div>
       </div>
@@ -627,25 +504,25 @@
   <footer class="footer">
     <div class="wrap footer-inner">
       <svg class="logo logo-footer" viewBox="0 80 600 340" aria-hidden="true"><use href="#logo"/></svg>
-      <p class="footer-name"><strong>Café Zakrzówek</strong> – <em>kawiarnia z widokiem</em> nad zalewem Zakrzówek</p>
+      <p class="footer-name"><strong>{{ F.nazwa | escape }}</strong> – <em>{{ F.haslo | escape }}</em> nad zalewem Zakrzówek</p>
       <address class="footer-contact">
-        ul. Wyłom 22, 30-364 Kraków (Dębniki) · codziennie <span data-hours>9:00–19:00</span><br>
-        <a class="tap" href="tel:+48795455233">795 455 233</a> · <a class="tap" href="mailto:cafe.zakrzowek@gmail.com">cafe.zakrzowek@gmail.com</a>
+        {{ F.ulica | escape }}, {{ F.kod_pocztowy }} {{ F.miasto | escape }} ({{ F.dzielnica | escape }}) · codziennie <span data-hours>{{ godziny }}</span><br>
+        <a class="tap" href="tel:{{ tel_link }}">{{ F.telefon | escape }}</a> · <a class="tap" href="mailto:{{ F.email }}">{{ F.email | escape }}</a>
       </address>
       <ul class="footer-links">
-        <li><a class="tap" href="https://www.instagram.com/cafe.zakrzowek/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-ig"/></svg> Instagram</a></li>
-        <li><a class="tap" href="https://www.facebook.com/profile.php?id=61556314341629" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-fb"/></svg> Facebook</a></li>
-        <li><a class="tap" href="https://www.google.com/maps/search/?api=1&amp;query=Caf%C3%A9+Zakrz%C3%B3wek%2C+Wy%C5%82om+22%2C+Krak%C3%B3w" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-star"/></svg> Opinie w Google</a></li>
+        <li><a class="tap" href="{{ F.instagram }}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-ig"/></svg> Instagram</a></li>
+        <li><a class="tap" href="{{ F.facebook }}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-fb"/></svg> Facebook</a></li>
+        <li><a class="tap" href="{{ F.wizytowka_google | escape }}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-star"/></svg> Opinie w Google</a></li>
       </ul>
-      <p class="small">© <span data-year>2026</span> Café Zakrzówek ☼ · Mapa: © OpenStreetMap contributors</p>
+      <p class="small">© <span data-year>{{ site.time | date: '%Y' }}</span> {{ F.nazwa | escape }} ☼ · Mapa: © OpenStreetMap contributors</p>
     </div>
   </footer>
 
   <!-- Pasek akcji na telefonie – dla spacerowiczów -->
   <nav class="action-bar" aria-label="Szybkie akcje">
-    <span class="status compact" data-open-status><i></i><span>9:00–19:00</span></span>
-    <a href="https://www.google.com/maps/dir/?api=1&amp;destination=50.0350478,19.9130438&amp;travelmode=walking" data-directions target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-walk"/></svg> Prowadź</a>
-    <a href="tel:+48795455233"><svg aria-hidden="true"><use href="#i-phone"/></svg> Zadzwoń</a>
+    <span class="status compact" data-open-status><i></i><span>{{ godziny }}</span></span>
+    <a href="{{ trasa | escape }}" data-directions target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-walk"/></svg> Prowadź</a>
+    <a href="tel:{{ tel_link }}"><svg aria-hidden="true"><use href="#i-phone"/></svg> Zadzwoń</a>
   </nav>
 
   <!-- Podgląd zdjęć -->
@@ -659,7 +536,7 @@
     <button type="button" class="round-btn lb-next" data-lb-next aria-label="Następne zdjęcie"><svg aria-hidden="true"><use href="#i-next"/></svg></button>
   </dialog>
 
-  <script src="js/seasons.js?v=20261106" defer></script>
+  <script src="js/seasons.js?v={{ site.time | date: '%Y%m%d%H%M' }}" defer></script>
   <script src="js/main.js?v=20261106" defer></script>
 </body>
 </html>

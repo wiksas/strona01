@@ -10,12 +10,18 @@
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const behavior = reduceMotion ? 'auto' : 'smooth';
-  const IMG = 'assets/img/';
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-
-  const imgAttrs = (name, sizes) => {
-    const [w, h] = C.images[name];
-    return `src="${IMG}${name}.webp" srcset="${IMG}${name}-320.webp 320w, ${IMG}${name}.webp ${w}w" sizes="${sizes}" width="${w}" height="${h}"`;
+  // Ścieżki z CMS są od katalogu głównego strony ("/assets/img/x.webp"); na GitHub Pages trzeba dodać baseurl.
+  const url = (p) => (p && p.startsWith('/') ? C.base + p : p);
+  const smalls = new Set(C.smalls);
+  const imgData = (path) => {
+    const [w, h] = C.images[path] || [480, 640];
+    const small = path.replace(/\.webp$/, '-320.webp');
+    return { src: url(path), srcset: small !== path && smalls.has(small) ? `${url(small)} 320w, ${url(path)} ${w}w` : '', w, h };
+  };
+  const imgAttrs = (path, sizes) => {
+    const d = imgData(path);
+    return `src="${d.src}"${d.srcset ? ` srcset="${d.srcset}" sizes="${sizes}"` : ''} width="${d.w}" height="${d.h}"`;
   };
 
   /* ---------------------------------------------------------------
@@ -88,15 +94,15 @@
   const marqueeEl = $('[data-marquee]');
 
   function renderHighlights(s) {
-    highlightsEl.innerHTML = s.highlights.map((h, i) => `
+    highlightsEl.innerHTML = (s.karty || []).map((h, i) => `
       <article class="card" data-reveal style="--i:${i}">
         <div class="card-img">
-          <img ${imgAttrs(h.img, '(max-width: 760px) 78vw, 380px')} loading="lazy" alt="${esc(h.alt)}">
-          <span class="tag">${esc(h.tag)}</span>
+          <img ${imgAttrs(h.obraz, '(max-width: 760px) 78vw, 380px')} loading="lazy" alt="${esc(h.alt || '')}">
+          <span class="tag">${esc(h.etykieta || '')}</span>
         </div>
         <div class="card-body">
-          <h3>${esc(h.title)}</h3>
-          <p>${esc(h.text)}</p>
+          <h3>${esc(h.tytul || '')}</h3>
+          <p>${esc(h.tekst || '')}</p>
         </div>
       </article>`).join('');
     observeReveals(highlightsEl);
@@ -104,7 +110,7 @@
 
   // Pas haseł: grupa powielona tak, żeby była szersza niż ekran, i zdublowana (pętla CSS przesuwa o -50%).
   function renderMarquee(s) {
-    const items = s.marquee.map((t) => `<span>${esc(t)}</span>`).join('');
+    const items = (s.hasla || []).map((t) => `<span>${esc(t)}</span>`).join('');
     marqueeEl.innerHTML = `<div class="marquee-group">${items}</div>`;
     const one = marqueeEl.firstElementChild.scrollWidth || 1;
     const group = `<div class="marquee-group">${items.repeat(Math.max(1, Math.ceil(innerWidth / one)))}</div>`;
@@ -112,14 +118,14 @@
   }
 
   function itemHTML(it, i) {
-    return `<li class="item" style="--i:${i}"><span class="item-name">${esc(it.name)}${it.badge ? `<span class="badge-s">${esc(it.badge)}</span>` : ''}</span>${it.desc ? `<p>${esc(it.desc)}</p>` : ''}</li>`;
+    return `<li class="item" style="--i:${i}"><span class="item-name">${esc(it.nazwa)}${it.znaczek ? `<span class="badge-s">${esc(it.znaczek)}</span>` : ''}</span>${it.opis ? `<p>${esc(it.opis)}</p>` : ''}</li>`;
   }
 
   function renderSeasonalMenu(s) {
-    $('[data-seasonal-menu]').innerHTML = s.menuSeasonal.map(itemHTML).join('');
-    $('#panel-sezon .panel-title').textContent = `Oferta sezonowa · ${s.label}`;
+    $('[data-seasonal-menu]').innerHTML = (s.menu_sezonowe || []).map(itemHTML).join('');
+    $('#panel-sezon .panel-title').textContent = `Oferta sezonowa · ${s.nazwa}`;
     const tab = $('#tab-panel-sezon');
-    if (tab) tab.textContent = `Sezonowo · ${s.label}`;
+    if (tab) tab.textContent = `Sezonowo · ${s.nazwa}`;
   }
 
   function applySeason(key, { initial = false } = {}) {
@@ -139,20 +145,20 @@
       }
     });
 
-    const walker = $('[data-s-img="walkerImg"]');
-    const [w, h] = C.images[s.walkerImg.src];
-    walker.srcset = `${IMG}${s.walkerImg.src}-320.webp 320w, ${IMG}${s.walkerImg.src}.webp ${w}w`;
-    walker.src = `${IMG}${s.walkerImg.src}.webp`;
-    walker.width = w; walker.height = h;
-    walker.alt = s.walkerImg.alt;
+    const walker = $('[data-s-img="spacer_obraz"]');
+    const wd = imgData(s.spacer_obraz.obraz);
+    if (wd.srcset) walker.srcset = wd.srcset; else walker.removeAttribute('srcset');
+    walker.src = wd.src;
+    walker.width = wd.w; walker.height = wd.h;
+    walker.alt = s.spacer_obraz.alt;
 
     window.CZ_setHero(key);
     renderHighlights(s);
     renderMarquee(s);
     renderSeasonalMenu(s);
-    particles.set(s.particles);
+    particles.set(s.czasteczki);
 
-    $('meta[name="theme-color"]').setAttribute('content', s.themeColor);
+    $('meta[name="theme-color"]').setAttribute('content', s.kolor_motywu);
     $$('[data-season-btn]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.seasonBtn === key));
 
     if (!initial) {
@@ -489,8 +495,9 @@
   $('[data-map-load]').addEventListener('click', () => {
     const map = $('[data-map]');
     const iframe = document.createElement('iframe');
-    iframe.title = 'Mapa Google: Café Zakrzówek, ul. Wyłom 22, Kraków';
-    iframe.src = 'https://www.google.com/maps?q=Caf%C3%A9+Zakrz%C3%B3wek,+Wy%C5%82om+22,+Krak%C3%B3w&z=15&output=embed';
+    const q = encodeURIComponent(map.dataset.mapQuery);
+    iframe.title = `Mapa Google: ${map.dataset.mapQuery}`;
+    iframe.src = `https://www.google.com/maps?q=${q}&z=15&output=embed`;
     iframe.referrerPolicy = 'no-referrer-when-downgrade';
     map.append(iframe);
     $('.map-cta', map).remove();

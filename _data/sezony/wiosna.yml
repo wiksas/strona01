@@ -1,0 +1,51 @@
+nazwa: Wiosna
+kolor_motywu: "#f6f1ea"
+czasteczki: petals
+tytul1: Kawa
+tytul2: w kwiatach
+tytul_kursywa: i widok na wiosenny Zakrzówek
+wstep: Pierwsze ciepłe spacery wokół zalewu zaczynają się u nas. Weź kawę na wynos w naszym kubku albo usiądź i złap wiosenne słońce.
+hero_glowne:
+  obraz: /assets/img/kawa-na-wynos-kubki-cafe-zakrzowek.webp
+  alt: Dwie kawy na wynos w kubkach Café Zakrzówek i bukiet wiosennych kwiatów
+hero_polaroid:
+  obraz: /assets/img/baristki-cafe-zakrzowek-krakow.webp
+  alt: Baristki Café Zakrzówek z kawą i gazetą w kawiarni
+plakietka: kawa na wynos ☼ wiosna ☼ kawa na wynos ☼ wiosna ☼
+spacer_tytul: Wiosenny spacer? Zrób przystanek na kawę.
+spacer_wstep: Jesteśmy przy ul. Wyłom 22, tuż przy ścieżkach wokół zalewu. Kawa na wynos, coś słodkiego i dalej w drogę – albo zostań na dłużej.
+spacer_obraz:
+  obraz: /assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp
+  alt: Drożdżówki z kruszonką i owocami na drewnianej desce, w tle zieleń nad Zakrzówkiem
+oferta_nadtytul: Oferta wiosenna
+oferta_tytul: Wiosna w witrynie
+oferta_wstep: Kwiaty, lekkie śniadania z witryny i kawa, którą zabierzesz na spacer.
+hasla:
+  - kawa na wynos
+  - wiosna nad Zakrzówkiem
+  - drożdżówki
+  - croissanty
+  - matcha
+  - widok na zalew
+karty:
+  - etykieta: na spacer
+    tytul: Kawa na wynos
+    tekst: W naszych kubkach z logo – gotowa na dalszy spacer wokół zalewu.
+    obraz: /assets/img/kawa-na-wynos-kubki-cafe-zakrzowek.webp
+    alt: Dwie kawy na wynos w kubkach z logo Café Zakrzówek
+  - etykieta: z witryny
+    tytul: Drożdżówki z owocami
+    tekst: Puszyste, z kruszonką i owocami. Najlepiej smakują z widokiem na zieleń.
+    obraz: /assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp
+    alt: Drożdżówki z kruszonką i owocami na drewnianej desce
+  - etykieta: codziennie
+    tytul: Croissanty wytrawne
+    tekst: Caprese, z boczkiem i jajkiem, z hummusem albo guacamole – śniadanie przed spacerem.
+    obraz: /assets/img/croissanty-wytrawne-cafe-zakrzowek.webp
+    alt: Croissanty wytrawne z pomidorem i warzywami na drewnianej desce
+menu_sezonowe:
+  - nazwa: Kawa na wynos
+    opis: Kawa z karty w kubku na spacer.
+  - nazwa: Drożdżówki z owocami
+    opis: Z kruszonką, prosto z witryny.
+  - nazwa: Matcha latte

@@ -1,0 +1,291 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# Sveltia CMS – panel treści Café Zakrzówek. Każde „Zapisz” to commit na main;
+# GitHub Pages przebudowuje stronę (Jekyll) w ok. 1–3 min.
+
+backend:
+  name: github
+  repo: wiksas/strona01
+  branch: main
+  # Logowanie tokenem GitHub (przycisk „Sign In Using Access Token”) albo lokalnie („Work with Local Repository”).
+  # Logowanie przyciskiem „Sign In with GitHub”: wdróż Sveltia CMS Authenticator, odkomentuj base_url
+  # i dopisz „oauth” do auth_methods.
+  # base_url: https://sveltia-cms-auth.TWOJE-KONTO.workers.dev
+  auth_methods: [token]
+  commit_messages:
+    update: "CMS: zmiana {{path}}"
+    uploadMedia: "CMS: nowe zdjęcie {{path}}"
+    deleteMedia: "CMS: usunięte zdjęcie {{path}}"
+
+site_url: https://wiksas.github.io/strona01/
+display_url: https://wiksas.github.io/strona01/
+
+media_folder: assets/img
+public_folder: /assets/img
+
+media_libraries:
+  default:
+    config:
+      max_file_size: 8000000
+      slugify_filename: true
+      transformations:
+        raster_image:
+          format: webp
+          quality: 80
+          width: 1280
+          height: 1280
+
+collections:
+  # ------------------------------------------------------------------
+  - name: sezony
+    label: Wersje sezonowe
+    description: Teksty, zdjęcia i oferta, które zmieniają się z porą roku. Sezon na stronie wybiera się sam według daty.
+    icon: partly_cloudy_day
+    editor:
+      preview: false
+    files:
+      - name: wiosna
+        label: Wiosna (marzec–maj)
+        file: _data/sezony/wiosna.yml
+        fields: &pola_sezonu
+          - { name: nazwa, label: Nazwa sezonu, widget: string }
+          - name: tytul1
+            label: Nagłówek – 1. linia
+            widget: string
+            hint: Krótko, 1–2 słowa (duże litery).
+            pattern: ['^.{1,14}$', 'Maksymalnie 14 znaków – inaczej nagłówek się nie zmieści.']
+          - name: tytul2
+            label: Nagłówek – 2. linia (w kolorze)
+            widget: string
+            pattern: ['^.{1,14}$', 'Maksymalnie 14 znaków – inaczej nagłówek się nie zmieści.']
+          - { name: tytul_kursywa, label: Nagłówek – linia kursywą, widget: string }
+          - { name: wstep, label: Tekst pod nagłówkiem, widget: text }
+          - name: hero_glowne
+            label: Zdjęcie główne (łuk)
+            widget: object
+            fields: &obraz_z_opisem
+              - { name: obraz, label: Zdjęcie, widget: image, hint: "Najlepiej pionowe (3:4)." }
+              - { name: alt, label: Opis zdjęcia (dla niewidomych i Google), widget: string, hint: "Co jest na zdjęciu, np. „Dwie kawy na wynos w kubkach z logo”." }
+          - { name: hero_polaroid, label: Zdjęcie małe (polaroid), widget: object, fields: *obraz_z_opisem }
+          - name: plakietka
+            label: Napis na okrągłej plakietce
+            widget: string
+            hint: Powtórz hasło dwa razy, np. „ciepła kawa ☼ na wynos ☼ ciepła kawa ☼ na wynos ☼”.
+            pattern: ['^.{10,52}$', 'Od 10 do 52 znaków, żeby napis zmieścił się w kole.']
+          - { name: spacer_tytul, label: "Sekcja „Na spacer” – nagłówek", widget: string }
+          - { name: spacer_wstep, label: "Sekcja „Na spacer” – tekst", widget: text }
+          - { name: spacer_obraz, label: "Sekcja „Na spacer” – zdjęcie", widget: object, fields: *obraz_z_opisem }
+          - { name: oferta_nadtytul, label: Oferta sezonowa – nadtytuł, widget: string }
+          - { name: oferta_tytul, label: Oferta sezonowa – nagłówek, widget: string }
+          - { name: oferta_wstep, label: Oferta sezonowa – tekst, widget: text }
+          - name: karty
+            label: Oferta sezonowa – karty
+            widget: list
+            min: 1
+            max: 3
+            summary: "{{fields.tytul}}"
+            fields:
+              - { name: etykieta, label: Etykieta na zdjęciu, widget: string, hint: "np. „nowość”, „limitowane”." }
+              - { name: tytul, label: Tytuł, widget: string }
+              - { name: tekst, label: Opis, widget: text }
+              - { name: obraz, label: Zdjęcie, widget: image }
+              - { name: alt, label: Opis zdjęcia, widget: string }
+          - name: hasla
+            label: Hasła na przesuwanym pasku
+            widget: list
+            min: 2
+            field: { name: haslo, label: Hasło, widget: string }
+          - name: menu_sezonowe
+            label: Menu – zakładka „Sezonowo”
+            widget: list
+            summary: "{{fields.nazwa}}"
+            fields:
+              - { name: nazwa, label: Nazwa, widget: string }
+              - { name: opis, label: Opis, widget: string, required: false }
+              - { name: znaczek, label: Znaczek, widget: string, required: false, hint: "np. „nowość”." }
+          - name: czasteczki
+            label: Animacja w górnej części strony
+            widget: select
+            options:
+              - { label: Płatki kwiatów, value: petals }
+              - { label: Błyski słońca, value: sun }
+              - { label: Liście, value: leaves }
+              - { label: Śnieg, value: snow }
+          - { name: kolor_motywu, label: Kolor paska przeglądarki na telefonie, widget: color }
+      - { name: lato, label: Lato (czerwiec–sierpień), file: _data/sezony/lato.yml, fields: *pola_sezonu }
+      - { name: jesien, label: Jesień (wrzesień–listopad), file: _data/sezony/jesien.yml, fields: *pola_sezonu }
+      - { name: zima, label: Zima (grudzień–luty), file: _data/sezony/zima.yml, fields: *pola_sezonu }
+
+  # ------------------------------------------------------------------
+  - name: strona
+    label: Treści strony
+    description: Stałe sekcje strony i dane kawiarni.
+    icon: web
+    editor:
+      preview: false
+    files:
+      - name: firma
+        label: Dane kawiarni i SEO
+        file: _data/firma.yml
+        fields:
+          - { name: nazwa, label: Nazwa, widget: string }
+          - { name: haslo, label: Hasło, widget: string }
+          - { name: opis, label: Krótki opis (dla Google), widget: text }
+          - { name: telefon, label: Telefon, widget: string, hint: "np. 795 455 233" }
+          - { name: email, label: E-mail, widget: string }
+          - { name: ulica, label: Ulica i numer, widget: string }
+          - { name: kod_pocztowy, label: Kod pocztowy, widget: string }
+          - { name: miasto, label: Miasto, widget: string }
+          - { name: dzielnica, label: Dzielnica, widget: string }
+          - { name: wojewodztwo, label: Województwo, widget: string }
+          - name: godziny
+            label: Godziny otwarcia (codziennie)
+            widget: object
+            hint: Pełne godziny. Zmień też odpowiedź w „Pytaniach”, jeśli podaje godziny.
+            fields:
+              - { name: otwarcie, label: Otwarcie (godzina), widget: number, value_type: int, min: 0, max: 23 }
+              - { name: zamkniecie, label: Zamknięcie (godzina), widget: number, value_type: int, min: 1, max: 24 }
+          - { name: szerokosc_geo, label: Szerokość geograficzna, widget: number, value_type: float }
+          - { name: dlugosc_geo, label: Długość geograficzna, widget: number, value_type: float }
+          - { name: instagram, label: Instagram (link), widget: string }
+          - { name: facebook, label: Facebook (link), widget: string }
+          - { name: wizytowka_google, label: Wizytówka Google (link), widget: string, hint: "Link do profilu firmy w Mapach Google – używany przy „Opinie w Google”." }
+          - name: seo_tytul
+            label: Tytuł strony w Google
+            widget: string
+            hint: Najważniejsza fraza na początku, nazwa kawiarni na końcu.
+            pattern: ['^.{20,60}$', 'Od 20 do 60 znaków.']
+          - name: seo_opis
+            label: Opis strony w Google
+            widget: text
+            hint: "Co, gdzie i dlaczego; na końcu zachęta, np. „Wpadnij!”."
+            pattern: ['^[\s\S]{100,160}$', 'Od 100 do 160 znaków.']
+          - { name: og_obraz, label: Obrazek przy udostępnianiu linku, widget: image, hint: "Dokładnie 1200 × 630 px, JPG." }
+          - { name: og_obraz_alt, label: Opis tego obrazka, widget: string }
+
+      - name: start
+        label: Góra strony
+        file: _data/strona/start.yml
+        fields:
+          - { name: etykieta_h1, label: Etykieta nad nagłówkiem (fraza dla Google), widget: string, hint: "np. „Kawiarnia nad Zakrzówkiem w Krakowie”." }
+          - { name: przycisk_trasa, label: Przycisk – trasa, widget: string }
+          - { name: przycisk_witryna, label: Przycisk – oferta, widget: string }
+          - { name: linia_adresu, label: Linia z adresem, widget: string }
+
+      - name: spacer
+        label: Sekcja „Na spacer”
+        file: _data/strona/spacer.yml
+        fields:
+          - { name: nadtytul, label: Nadtytuł, widget: string }
+          - name: kroki
+            label: Kroki
+            widget: list
+            min: 1
+            max: 4
+            summary: "{{fields.tytul}}"
+            fields:
+              - { name: tytul, label: Tytuł, widget: string }
+              - { name: tekst, label: Tekst, widget: string }
+          - { name: przycisk_odleglosc, label: "Przycisk „Ile mam do was?”", widget: string }
+          - { name: notka_odleglosc, label: Tekst obok przycisku, widget: string }
+
+      - name: galeria
+        label: Galeria zdjęć
+        file: _data/strona/galeria.yml
+        fields:
+          - { name: nadtytul, label: Nadtytuł, widget: string }
+          - { name: tytul, label: Nagłówek, widget: string }
+          - name: zdjecia
+            label: Zdjęcia
+            widget: list
+            min: 2
+            summary: "{{fields.podpis}}"
+            fields:
+              - { name: obraz, label: Zdjęcie, widget: image }
+              - { name: alt, label: Opis zdjęcia, widget: string }
+              - { name: podpis, label: Podpis na zdjęciu, widget: string, required: false }
+              - { name: szerokie, label: Zdjęcie poziome / kwadratowe (szerszy kafelek), widget: boolean, default: false }
+
+      - name: menu
+        label: Menu
+        file: _data/strona/menu.yml
+        fields:
+          - { name: nadtytul, label: Nadtytuł, widget: string }
+          - { name: tytul, label: Nagłówek, widget: string }
+          - { name: wstep, label: Tekst, widget: text }
+          - { name: witryna_zakladka, label: Witryna – nazwa zakładki, widget: string }
+          - { name: witryna_tytul, label: Witryna – tytuł, widget: string }
+          - name: witryna
+            label: Witryna – pozycje
+            widget: list
+            summary: "{{fields.nazwa}}"
+            fields: &pozycja_menu
+              - { name: nazwa, label: Nazwa, widget: string }
+              - { name: opis, label: Opis, widget: string, required: false }
+          - { name: napoje_zakladka, label: Napoje – nazwa zakładki, widget: string }
+          - { name: napoje_tytul, label: Napoje – tytuł, widget: string }
+          - { name: napoje, label: Napoje – pozycje, widget: list, summary: "{{fields.nazwa}}", fields: *pozycja_menu }
+          - name: napoje_notka
+            label: Napoje – notka pod listą
+            widget: markdown
+            required: false
+            modes: [rich_text]
+            buttons: [bold, italic, link]
+            editor_components: []
+
+      - name: przestrzen
+        label: Sekcja „Przestrzeń”
+        file: _data/strona/przestrzen.yml
+        fields:
+          - { name: nadtytul, label: Nadtytuł, widget: string }
+          - { name: tytul, label: Nagłówek, widget: string }
+          - { name: obraz, label: Zdjęcie, widget: image, hint: "Najlepiej poziome (4:3)." }
+          - { name: obraz_alt, label: Opis zdjęcia, widget: string }
+          - { name: punkty, label: Punkty, widget: list, field: { name: punkt, label: Punkt, widget: string } }
+
+      - name: przyjecia
+        label: Sekcja „Przyjęcia”
+        file: _data/strona/przyjecia.yml
+        fields:
+          - { name: nadtytul, label: Nadtytuł, widget: string }
+          - { name: tytul, label: Nagłówek, widget: string }
+          - { name: wstep, label: Tekst przed listą, widget: text }
+          - { name: rodzaje, label: Rodzaje wydarzeń, widget: list, field: { name: rodzaj, label: Rodzaj, widget: string } }
+          - { name: tekst_dodatkowy, label: Tekst pod listą, widget: text, required: false }
+          - { name: przycisk_mail, label: Przycisk e-mail, widget: string }
+          - { name: obraz_glowny, label: Zdjęcie główne, widget: image }
+          - { name: obraz_glowny_alt, label: Opis zdjęcia głównego, widget: string }
+          - { name: obraz_boczny, label: Zdjęcie boczne, widget: image, required: false }
+          - { name: obraz_boczny_alt, label: Opis zdjęcia bocznego, widget: string, required: false }
+          - { name: obraz_boczny_podpis, label: Podpis zdjęcia bocznego, widget: string, required: false }
+
+      - name: pytania
+        label: Pytania (FAQ)
+        file: _data/strona/pytania.yml
+        fields:
+          - { name: nadtytul, label: Nadtytuł, widget: string }
+          - { name: tytul, label: Nagłówek, widget: string }
+          - name: lista
+            label: Pytania i odpowiedzi
+            widget: list
+            min: 1
+            summary: "{{fields.pytanie}}"
+            hint: Tylko prawdziwe pytania klientów i prawdziwe odpowiedzi – trafiają też do danych dla Google.
+            fields:
+              - { name: pytanie, label: Pytanie, widget: string }
+              - name: odpowiedz
+                label: Odpowiedź
+                widget: markdown
+                modes: [rich_text]
+                buttons: [bold, italic, link]
+                editor_components: []
+
+      - name: kontakt
+        label: Sekcja „Dojazd”
+        file: _data/strona/kontakt.yml
+        fields:
+          - { name: nadtytul, label: Nadtytuł, widget: string }
+          - { name: tytul, label: Nagłówek, widget: string }
+          - { name: dopisek_adresu, label: Dopisek przy adresie, widget: string, required: false }
+          - { name: przycisk_trasa, label: Przycisk – trasa, widget: string }
+          - { name: mapa, label: Statyczna mapa, widget: hidden }
+          - { name: mapa_alt, label: Opis mapy, widget: string }

@@ -1,0 +1,15 @@
+# Wymiary zdjęć (szerokość, wysokość) – do atrybutów width/height i srcset.
+# Zdjęcia dodane przez CMS, których tu nie ma, dostają domyślnie 480×640.
+# Wersja „-320.webp” obok zdjęcia włącza srcset automatycznie.
+"/assets/img/kawa-na-wynos-kubki-cafe-zakrzowek.webp": [498, 640]
+"/assets/img/frugoo-matcha-widok-na-zalew-zakrzowek.webp": [480, 640]
+"/assets/img/poziomianki-nad-zalewem-zakrzowek.webp": [480, 640]
+"/assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp": [480, 640]
+"/assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem.webp": [480, 640]
+"/assets/img/szachy-i-kawa-w-kawiarni-krakow.webp": [640, 478]
+"/assets/img/baristki-cafe-zakrzowek-krakow.webp": [480, 640]
+"/assets/img/croissanty-wytrawne-cafe-zakrzowek.webp": [640, 640]
+"/assets/img/sala-na-przyjecia-cafe-zakrzowek-krakow.webp": [481, 640]
+"/assets/img/spotkanie-podroznicze-cafe-zakrzowek.webp": [480, 640]
+"/assets/img/mapa-dojazdu-cafe-zakrzowek-wylom-22.webp": [960, 720]
+"/assets/img/cafe-zakrzowek-krakow-og.jpg": [1200, 630]

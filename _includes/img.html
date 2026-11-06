@@ -1,0 +1,11 @@
+{%- comment -%}
+  Obraz z wymiarami i srcset (gdy obok jest wersja -320.webp).
+  Parametry: src (np. /assets/img/x.webp), alt, sizes, lazy (true/false), attrs (dodatkowe atrybuty).
+{%- endcomment -%}
+{%- assign _src = include.src -%}
+{%- assign _d = site.data.obrazy[_src] -%}
+{%- assign _w = _d[0] | default: 480 -%}
+{%- assign _h = _d[1] | default: 640 -%}
+{%- assign _small = _src | replace: '.webp', '-320.webp' -%}
+{%- assign _has = site.static_files | where: "path", _small | size -%}
+<img src="{{ _src | relative_url }}"{% if _has > 0 and _small != _src %} srcset="{{ _small | relative_url }} 320w, {{ _src | relative_url }} {{ _w }}w" sizes="{{ include.sizes }}"{% endif %} width="{{ _w }}" height="{{ _h }}"{% if include.lazy %} loading="lazy"{% endif %}{% if include.attrs %} {{ include.attrs }}{% endif %} alt="{{ include.alt | escape }}">
