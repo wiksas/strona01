@@ -1,13 +1,12 @@
 nazwa: Lato
 kolor_motywu: "#f3efe7"
-czasteczki: sun
 tytul1: Lato
 tytul2: nad zalewem
 tytul_kursywa: drożdżówka, słońce i widok
-wstep: Widok, który zatrzymuje lato na dłużej. Po plażowaniu albo w połowie spaceru wokół Zakrzówka – wpadnij na coś zimnego.
+wstep: Widok, który zatrzymuje lato na dłużej. Po plażowaniu albo w połowie spaceru wokół Zakrzówka wpadnij na coś zimnego.
 hero_glowne:
   obraz: /assets/img/frugoo-matcha-widok-na-zalew-zakrzowek.webp
-  alt: Frugoo Matcha – matcha wlewana do lemoniady marakuja, w tle zalew Zakrzówek
+  alt: "Frugoo Matcha: matcha wlewana do lemoniady marakuja, w tle zalew Zakrzówek"
 hero_polaroid:
   obraz: /assets/img/poziomianki-nad-zalewem-zakrzowek.webp
   alt: Drożdżówki z truskawkami na drewnianej desce, w tle turkusowy zalew Zakrzówek
@@ -19,7 +18,7 @@ spacer_obraz:
   alt: Dwie kawy na wynos w kubkach Café Zakrzówek i bukiet kwiatów
 oferta_nadtytul: Oferta letnia
 oferta_tytul: Smaki lata
-oferta_wstep: Pozycje sezonowe znikają szybko – część z nich to edycje mocno limitowane.
+oferta_wstep: Pozycje sezonowe znikają szybko, a część z nich to edycje mocno limitowane.
 hasla:
   - frugoo matcha
   - jagodzianki
@@ -30,7 +29,7 @@ hasla:
 karty:
   - etykieta: nowość
     tytul: Frugoo Matcha
-    tekst: Połączenie lemoniady marakuja i matchy – idealne na upalne dni.
+    tekst: Lemoniada marakuja i matcha w jednej szklance. Na upalne dni.
     obraz: /assets/img/frugoo-matcha-widok-na-zalew-zakrzowek.webp
     alt: Frugoo Matcha w szklance na balkonie z widokiem na zalew Zakrzówek
   - etykieta: limitowane
@@ -38,8 +37,7 @@ karty:
     tekst: Sezonowe drożdżówki z owocami. Poziomianki to edycja mocno limitowana!
     obraz: /assets/img/poziomianki-nad-zalewem-zakrzowek.webp
     alt: Poziomianki na drewnianej desce, w tle zalew Zakrzówek
-  - etykieta: sezonowo
-    tytul: Malinianki pistacjowe
+  - tytul: Malinianki pistacjowe
     tekst: Maliny w cieście drożdżowym z kremem pistacjowym na bazie białej czekolady.
     obraz: /assets/img/malinianki-z-kremem-pistacjowym-nad-zalewem.webp
     alt: Malinianki z kremem pistacjowym i malinami
@@ -48,7 +46,7 @@ menu_sezonowe:
     opis: Lemoniada marakuja + matcha.
     znaczek: nowość
   - nazwa: Jagodzianki
-    opis: Sezon na jagody – póki są.
+    opis: Sezon na jagody, póki są.
   - nazwa: Poziomianki
     opis: Edycja mocno limitowana.
     znaczek: limit

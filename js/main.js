@@ -7,7 +7,6 @@
   const root = document.documentElement;
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const behavior = reduceMotion ? 'auto' : 'smooth';
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -70,7 +69,7 @@
     const soon = isOpen && close * 60 - now <= 45;
     let long, short;
     if (isOpen) {
-      long = soon ? `Otwarte jeszcze do ${fmtHour(close)} – zdążysz!` : `Otwarte teraz · do ${fmtHour(close)}`;
+      long = soon ? `Otwarte jeszcze do ${fmtHour(close)}, zdążysz!` : `Otwarte teraz · do ${fmtHour(close)}`;
       short = `Otwarte<br>do ${fmtHour(close)}`;
     } else if (now < open * 60) {
       long = `Zamknięte · otwarcie dziś o ${fmtHour(open)}`;
@@ -94,11 +93,13 @@
   const marqueeEl = $('[data-marquee]');
 
   function renderHighlights(s) {
-    highlightsEl.innerHTML = (s.karty || []).map((h, i) => `
+    const cards = s.karty || [];
+    highlightsEl.style.setProperty('--rest', Math.max(0, cards.length - 1));
+    highlightsEl.innerHTML = cards.map((h, i) => `
       <article class="card" data-reveal style="--i:${i}">
         <div class="card-img">
           <img ${imgAttrs(h.obraz, '(max-width: 760px) 78vw, 380px')} loading="lazy" alt="${esc(h.alt || '')}">
-          <span class="tag">${esc(h.etykieta || '')}</span>
+          ${h.etykieta ? `<span class="tag">${esc(h.etykieta)}</span>` : ''}
         </div>
         <div class="card-body">
           <h3>${esc(h.tytul || '')}</h3>
@@ -108,7 +109,7 @@
     observeReveals(highlightsEl);
   }
 
-  // Pas haseł: grupa powielona tak, żeby była szersza niż ekran, i zdublowana (pętla CSS przesuwa o -50%).
+  // Pas haseł: grupa powielona tak, żeby była szersza niż ekran, i zdublowana (CSS przesuwa pas o -50% w rytm przewijania strony).
   function renderMarquee(s) {
     const items = (s.hasla || []).map((t) => `<span>${esc(t)}</span>`).join('');
     marqueeEl.innerHTML = `<div class="marquee-group">${items}</div>`;
@@ -156,7 +157,6 @@
     renderHighlights(s);
     renderMarquee(s);
     renderSeasonalMenu(s);
-    particles.set(s.czasteczki);
 
     $('meta[name="theme-color"]').setAttribute('content', s.kolor_motywu);
     $$('[data-season-btn]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.seasonBtn === key));
@@ -185,113 +185,6 @@
   }
 
   $$('[data-season-btn]').forEach((b) => b.addEventListener('click', () => switchSeason(b.dataset.seasonBtn, b)));
-
-  /* ---------------------------------------------------------------
-     Cząsteczki sezonowe w hero (płatki / słońce / liście / śnieg)
-     --------------------------------------------------------------- */
-  const particles = (() => {
-    const canvas = $('.particles');
-    const ctx = canvas.getContext('2d');
-    let type = null, items = [], w = 0, h = 0, raf = 0, visible = true, last = 0;
-
-    const palettes = {
-      petals: ['#f2b8c6', '#eaa9b7', '#f7d3dc', '#ffffff'],
-      sun: ['#f1c56a', '#ffe3a3', '#e2a93b'],
-      leaves: ['#c4692f', '#b8862f', '#a54a22', '#d9a441', '#8a6b2e'],
-      snow: ['#ffffff']
-    };
-
-    const rand = (a, b) => a + Math.random() * (b - a);
-
-    function spawn(initial) {
-      const pal = palettes[type];
-      const p = {
-        x: rand(0, w), y: initial ? rand(0, h) : -20,
-        s: rand(.6, 1.2), rot: rand(0, Math.PI * 2), vr: rand(-.02, .02),
-        sway: rand(.5, 1.6), phase: rand(0, Math.PI * 2),
-        color: pal[(Math.random() * pal.length) | 0], a: rand(.55, .95)
-      };
-      if (type === 'snow') { p.vy = rand(.35, 1.1); p.r = rand(1.2, 3.6); }
-      else if (type === 'sun') { p.y = initial ? rand(0, h) : h + 20; p.vy = -rand(.15, .45); p.r = rand(1.5, 4.5); }
-      else if (type === 'leaves') { p.vy = rand(.6, 1.4); }
-      else { p.vy = rand(.4, 1); }
-      return p;
-    }
-
-    function resize() {
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      w = canvas.clientWidth; h = canvas.clientHeight;
-      canvas.width = w * dpr; canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-
-    function count() {
-      const base = type === 'snow' ? 70 : type === 'sun' ? 34 : 26;
-      return Math.round(base * clamp((w * h) / (1400 * 900), .35, 1));
-    }
-
-    function draw(p, t) {
-      ctx.save();
-      ctx.globalAlpha = p.a;
-      ctx.translate(p.x, p.y);
-      if (type === 'snow') {
-        ctx.fillStyle = p.color;
-        ctx.beginPath(); ctx.arc(0, 0, p.r, 0, Math.PI * 2); ctx.fill();
-      } else if (type === 'sun') {
-        const tw = .5 + .5 * Math.sin(t / 600 + p.phase);
-        ctx.globalAlpha = p.a * (.35 + .65 * tw);
-        const g = ctx.createRadialGradient(0, 0, 0, 0, 0, p.r * 3);
-        g.addColorStop(0, p.color); g.addColorStop(1, 'rgba(255,220,150,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(0, 0, p.r * 3, 0, Math.PI * 2); ctx.fill();
-      } else if (type === 'leaves') {
-        ctx.rotate(p.rot); ctx.scale(p.s, p.s * (.6 + .4 * Math.abs(Math.sin(t / 700 + p.phase))));
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.moveTo(0, -11); ctx.quadraticCurveTo(9, -3, 0, 11); ctx.quadraticCurveTo(-9, -3, 0, -11);
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(0,0,0,.18)'; ctx.lineWidth = .8;
-        ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(0, 13); ctx.stroke();
-      } else {
-        ctx.rotate(p.rot); ctx.scale(p.s, p.s * Math.abs(Math.sin(t / 800 + p.phase)) + .15);
-        ctx.fillStyle = p.color;
-        ctx.beginPath(); ctx.ellipse(0, 0, 7, 4.2, 0, 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.restore();
-    }
-
-    function frame(t) {
-      raf = 0;
-      if (!visible || !type || document.hidden) return;
-      const dt = Math.min(3, (t - (last || t)) / 16.7); last = t;
-      ctx.clearRect(0, 0, w, h);
-      for (let i = 0; i < items.length; i++) {
-        const p = items[i];
-        p.y += p.vy * dt;
-        p.x += Math.sin(t / 1400 + p.phase) * .4 * p.sway * dt;
-        p.rot += p.vr * dt;
-        if (p.y > h + 24 || p.y < -30 || p.x < -30 || p.x > w + 30) items[i] = spawn(false);
-        draw(p, t);
-      }
-      raf = requestAnimationFrame(frame);
-    }
-
-    function start() { if (!raf && type && visible) { last = 0; raf = requestAnimationFrame(frame); } }
-
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; start(); }).observe(canvas);
-    document.addEventListener('visibilitychange', start);
-    addEventListener('resize', () => { if (type) resize(); }, { passive: true });
-
-    return {
-      set(next) {
-        if (reduceMotion) return;
-        type = next;
-        resize();
-        items = Array.from({ length: count() }, () => spawn(true));
-        start();
-      }
-    };
-  })();
 
   /* ---------------------------------------------------------------
      Warstwy z obsługą przycisku „wstecz” (menu mobilne, podgląd zdjęć)
@@ -487,6 +380,11 @@
         if (d) { e.preventDefault(); select(tabs[(i + d + tabs.length) % tabs.length], true); }
       });
     });
+    // Linki z data-open-tab (np. „Co dziś w witrynie?” w hero) przewijają do menu i otwierają wskazaną zakładkę.
+    $$('[data-open-tab]').forEach((a) => a.addEventListener('click', () => {
+      const tab = document.getElementById(`tab-${a.dataset.openTab}`);
+      if (tab) select(tab);
+    }));
   }
 
   /* ---------------------------------------------------------------
@@ -518,7 +416,7 @@
   $('[data-locate]').addEventListener('click', (e) => {
     const btn = e.currentTarget;
     if (!('geolocation' in navigator)) {
-      out.textContent = 'Twoja przeglądarka nie udostępnia lokalizacji – skorzystaj z przycisku „Prowadź do nas”.';
+      out.textContent = 'Twoja przeglądarka nie udostępnia lokalizacji. Skorzystaj z przycisku „Prowadź do nas”.';
       return;
     }
     btn.disabled = true;
@@ -531,11 +429,11 @@
       const min = Math.max(1, Math.round(d / 80));
       const dist = d < 1000 ? `${Math.round(d / 10) * 10} m` : `${(d / 1000).toFixed(1).replace('.', ',')} km`;
       if (d < 120) out.innerHTML = '<strong>Jesteś praktycznie u nas!</strong> Wpadaj ☼';
-      else if (d > 15000) out.innerHTML = `Jesteś ok. <strong>${dist}</strong> od nas – zapraszamy przy najbliższym spacerze nad Zakrzówkiem ☼`;
-      else out.innerHTML = `Jesteś ok. <strong>${dist}</strong> od nas – to ok. <strong>${min} min</strong> spacerem. <a href="${$('[data-directions]').href}" target="_blank" rel="noopener">Pokaż trasę pieszą</a>`;
+      else if (d > 15000) out.innerHTML = `Jesteś ok. <strong>${dist}</strong> od nas. Zapraszamy przy najbliższym spacerze nad Zakrzówkiem ☼`;
+      else out.innerHTML = `Jesteś ok. <strong>${dist}</strong> od nas, to ok. <strong>${min} min</strong> spacerem. <a href="${$('[data-directions]').href}" target="_blank" rel="noopener">Pokaż trasę pieszą</a>`;
     }, () => {
       btn.disabled = false;
-      out.textContent = 'Bez dostępu do lokalizacji nie policzymy odległości – ale trasę pokaże Ci mapa po kliknięciu „Prowadź do nas”.';
+      out.textContent = 'Bez dostępu do lokalizacji nie policzymy odległości. Trasę pokaże Ci mapa po kliknięciu „Prowadź do nas”.';
     }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
   });
 

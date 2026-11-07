@@ -1,6 +1,5 @@
 nazwa: Jesień
 kolor_motywu: "#f2e9dc"
-czasteczki: leaves
 tytul1: Jesień
 tytul2: przy kawie
 tytul_kursywa: z widokiem na złoty Zakrzówek
@@ -19,7 +18,7 @@ spacer_obraz:
   alt: Baristki Café Zakrzówek z kawą i gazetą w kawiarni
 oferta_nadtytul: Oferta jesienna
 oferta_tytul: Jesień u nas
-oferta_wstep: Dłuższe popołudnia przy stoliku – z kawą, czymś słodkim i grą planszową.
+oferta_wstep: "Dłuższe popołudnia przy stoliku: z kawą, czymś słodkim i grą planszową."
 hasla:
   - ciepła kawa
   - gry planszowe
@@ -30,16 +29,14 @@ hasla:
 karty:
   - etykieta: na miejscu
     tytul: Gry planszowe i szachy
-    tekst: Przestrzeń do rozrywki i odpoczynku – zostań na partię.
+    tekst: Przestrzeń do rozrywki i odpoczynku. Zostań na partię.
     obraz: /assets/img/szachy-i-kawa-w-kawiarni-krakow.webp
     alt: Goście grający w szachy przy kawie w Café Zakrzówek
-  - etykieta: klasyk
-    tytul: Malinianki
+  - tytul: Malinianki
     tekst: Maliny zawinięte w ciasto drożdżowe, przykryte kruszonką.
     obraz: /assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp
     alt: Drożdżówki z kruszonką i owocami na drewnianej desce, w tle zieleń nad Zakrzówkiem
-  - etykieta: do kawy
-    tytul: Kawa i gazetka
+  - tytul: Kawa i gazetka
     tekst: Kawa, gazetka i nasze świetne baristki gotowe do pracy.
     obraz: /assets/img/baristki-cafe-zakrzowek-krakow.webp
     alt: Baristki Café Zakrzówek z kawą i gazetą w kawiarni

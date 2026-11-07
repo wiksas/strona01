@@ -1,6 +1,5 @@
 nazwa: Wiosna
 kolor_motywu: "#f6f1ea"
-czasteczki: petals
 tytul1: Kawa
 tytul2: w kwiatach
 tytul_kursywa: i widok na wiosenny Zakrzówek
@@ -13,7 +12,7 @@ hero_polaroid:
   alt: Baristki Café Zakrzówek z kawą i gazetą w kawiarni
 plakietka: kawa na wynos ☼ wiosna ☼ kawa na wynos ☼ wiosna ☼
 spacer_tytul: Wiosenny spacer? Zrób przystanek na kawę.
-spacer_wstep: Jesteśmy przy ul. Wyłom 22, tuż przy ścieżkach wokół zalewu. Kawa na wynos, coś słodkiego i dalej w drogę – albo zostań na dłużej.
+spacer_wstep: Jesteśmy przy ul. Wyłom 22, tuż przy ścieżkach wokół zalewu. Kawa na wynos, coś słodkiego i dalej w drogę. Albo zostań na dłużej.
 spacer_obraz:
   obraz: /assets/img/drozdzowki-z-owocami-nad-zakrzowkiem.webp
   alt: Drożdżówki z kruszonką i owocami na drewnianej desce, w tle zieleń nad Zakrzówkiem
@@ -28,9 +27,8 @@ hasla:
   - matcha
   - widok na zalew
 karty:
-  - etykieta: na spacer
-    tytul: Kawa na wynos
-    tekst: W naszych kubkach z logo – gotowa na dalszy spacer wokół zalewu.
+  - tytul: Kawa na wynos
+    tekst: W naszych kubkach z logo, gotowa na dalszy spacer wokół zalewu.
     obraz: /assets/img/kawa-na-wynos-kubki-cafe-zakrzowek.webp
     alt: Dwie kawy na wynos w kubkach z logo Café Zakrzówek
   - etykieta: z witryny
@@ -40,7 +38,7 @@ karty:
     alt: Drożdżówki z kruszonką i owocami na drewnianej desce
   - etykieta: codziennie
     tytul: Croissanty wytrawne
-    tekst: Caprese, z boczkiem i jajkiem, z hummusem albo guacamole – śniadanie przed spacerem.
+    tekst: Caprese, z boczkiem i jajkiem, z hummusem albo guacamole. Śniadanie przed spacerem.
     obraz: /assets/img/croissanty-wytrawne-cafe-zakrzowek.webp
     alt: Croissanty wytrawne z pomidorem i warzywami na drewnianej desce
 menu_sezonowe:

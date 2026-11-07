@@ -24,7 +24,7 @@ Potem w `admin/config.yml` odkomentuj `base_url` i dopisz `oauth` do `auth_metho
 
 | Sekcja panelu | Plik | Co zmienia |
 |---|---|---|
-| Wersje sezonowe → Wiosna / Lato / Jesień / Zima | `_data/sezony/*.yml` | nagłówek, tekst, zdjęcia hero, plakietka, sekcja „Na spacer”, oferta sezonowa (karty), hasła na pasku, zakładka „Sezonowo” w menu, animacja |
+| Wersje sezonowe → Wiosna / Lato / Jesień / Zima | `_data/sezony/*.yml` | nagłówek, tekst, zdjęcia hero, plakietka, sekcja „Na spacer”, oferta sezonowa (karty; pierwsza karta jest duża, etykieta na zdjęciu opcjonalna), hasła na pasku, zakładka „Sezonowo” w menu |
 | Treści strony → Dane kawiarni i SEO | `_data/firma.yml` | nazwa, telefon, e-mail, adres, godziny, linki, tytuł i opis w Google, obrazek do udostępniania |
 | Treści strony → pozostałe | `_data/strona/*.yml` | góra strony, „Na spacer”, galeria, menu, przestrzeń, przyjęcia, pytania (FAQ), dojazd |
 

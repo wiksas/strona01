@@ -1,7 +1,7 @@
 nadtytul: Karta
 tytul: "Menu kawiarni: kawa, matcha i wypieki"
-wstep: Witryna zmienia się codziennie – zawsze znajdziesz w niej coś innego. Niektóre pozycje chętnie podgrzejemy.
-witryna_tytul: Z witryny – codziennie
+wstep: Witryna zmienia się codziennie, więc zawsze znajdziesz w niej coś innego. Niektóre pozycje chętnie podgrzejemy.
+witryna_tytul: Z witryny, codziennie
 witryna_zakladka: Z witryny
 witryna:
   - nazwa: Croissant z boczkiem i jajkiem
@@ -23,4 +23,4 @@ napoje:
   - nazwa: Matcha latte
   - nazwa: Frugoo Matcha
     opis: lemoniada marakuja + matcha
-napoje_notka: Pełna karta napojów – kawy ciepłe i zimne, matcha, napoje ciepłe i zimne – jest w wyróżnionych relacjach na [naszym Instagramie](https://www.instagram.com/cafe.zakrzowek/) i na miejscu.
+napoje_notka: "Pełna karta napojów (kawy ciepłe i zimne, matcha, napoje ciepłe i zimne) jest w wyróżnionych relacjach na [naszym Instagramie](https://www.instagram.com/cafe.zakrzowek/) i na miejscu."

@@ -1,6 +1,6 @@
 nadtytul: Zaplanuj swoje wydarzenie u nas
 tytul: Sala na przyjęcia w Krakowie z widokiem na Zakrzówek
-wstep: "Duża, klimatyczna sala z pięknym widokiem w kawiarni przy ul. Wyłom 22. Organizujemy:"
+wstep: "Duża sala ze światełkami i oknami na zieleń wokół zalewu, w kawiarni przy ul. Wyłom 22. Organizujemy:"
 rodzaje:
   - urodziny i imieniny
   - imprezy firmowe
@@ -8,7 +8,7 @@ rodzaje:
   - konferencje i warsztaty
   - baby shower
   - ceremonie zaślubin
-tekst_dodatkowy: Organizujemy też spotkania z gośćmi – np. wieczory podróżnicze. Śledź nasz Instagram, żeby nie przegapić kolejnego.
+tekst_dodatkowy: Organizujemy też spotkania z gośćmi, np. wieczory podróżnicze. Śledź nasz Instagram, żeby nie przegapić kolejnego.
 przycisk_mail: Napisz w sprawie sali
 obraz_glowny: /assets/img/sala-na-przyjecia-cafe-zakrzowek-krakow.webp
 obraz_glowny_alt: "Sala na przyjęcia w Café Zakrzówek: stoły z białymi obrusami, światełka i duże okna"

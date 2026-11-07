@@ -84,7 +84,7 @@ collections:
             max: 3
             summary: "{{fields.tytul}}"
             fields:
-              - { name: etykieta, label: Etykieta na zdjęciu, widget: string, hint: "np. „nowość”, „limitowane”." }
+              - { name: etykieta, label: Etykieta na zdjęciu, widget: string, required: false, hint: "Tylko gdy niesie informację, np. „nowość”, „limitowane”, „na ciepło”. Zostaw puste, jeśli powtarza tytuł." }
               - { name: tytul, label: Tytuł, widget: string }
               - { name: tekst, label: Opis, widget: text }
               - { name: obraz, label: Zdjęcie, widget: image }
@@ -102,14 +102,6 @@ collections:
               - { name: nazwa, label: Nazwa, widget: string }
               - { name: opis, label: Opis, widget: string, required: false }
               - { name: znaczek, label: Znaczek, widget: string, required: false, hint: "np. „nowość”." }
-          - name: czasteczki
-            label: Animacja w górnej części strony
-            widget: select
-            options:
-              - { label: Płatki kwiatów, value: petals }
-              - { label: Błyski słońca, value: sun }
-              - { label: Liście, value: leaves }
-              - { label: Śnieg, value: snow }
           - { name: kolor_motywu, label: Kolor paska przeglądarki na telefonie, widget: color }
       - { name: lato, label: Lato (czerwiec–sierpień), file: _data/sezony/lato.yml, fields: *pola_sezonu }
       - { name: jesien, label: Jesień (wrzesień–listopad), file: _data/sezony/jesien.yml, fields: *pola_sezonu }

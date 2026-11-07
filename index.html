@@ -32,7 +32,7 @@
 
   <link rel="preload" href="assets/fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/lora-normal-400-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=20261106">
+  <link rel="stylesheet" href="css/style.css?v=20261107">
 
   <!-- Sezon i zdjęcia hero ustawiane przed renderem (bez mignięcia motywu, szybki LCP). -->
   <script>
@@ -128,7 +128,7 @@
           "itemOffered": {
             "@type": "Service",
             "name": "Sala na przyjęcia i wydarzenia",
-            "description": {{ P.przyjecia.rodzaje | join: ', ' | prepend: 'Duża, klimatyczna sala z widokiem na: ' | append: '.' | jsonify }},
+            "description": {{ P.przyjecia.rodzaje | join: ', ' | prepend: 'Sala na przyjęcia z widokiem na zieleń wokół zalewu Zakrzówek. Organizujemy: ' | append: '.' | jsonify }},
             "areaServed": { "@type": "City", "name": {{ F.miasto | jsonify }} },
             "provider": { "@id": "{{ base }}#cafe" }
           }
@@ -171,11 +171,10 @@
   {% include sprite.html %}
 
   <a class="skip" href="#main">Przejdź do treści</a>
-  <div class="progress" aria-hidden="true"><span></span></div>
 
   <header class="site-header" id="top">
     <div class="wrap header-inner">
-      <a href="#top" class="brand" aria-label="{{ F.nazwa | escape }} – strona główna">
+      <a href="#top" class="brand" aria-label="{{ F.nazwa | escape }}, strona główna">
         <svg class="logo" viewBox="0 80 600 340" aria-hidden="true"><use href="#logo"/></svg>
       </a>
 
@@ -203,7 +202,6 @@
   <main id="main">
     <!-- HERO -->
     <section class="hero" aria-labelledby="hero-title">
-      <canvas class="particles" aria-hidden="true"></canvas>
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <p class="eyebrow hero-in" style="--d:0">
@@ -220,7 +218,7 @@
             <a class="btn btn-primary" data-directions href="{{ trasa | escape }}" target="_blank" rel="noopener">
               <svg aria-hidden="true"><use href="#i-walk"/></svg> {{ P.start.przycisk_trasa | escape }}
             </a>
-            <a class="btn btn-ghost" href="#sezon">{{ P.start.przycisk_witryna | escape }}</a>
+            <a class="btn btn-ghost" href="#menu" data-open-tab="panel-witryna">{{ P.start.przycisk_witryna | escape }}</a>
           </div>
           <p class="address hero-in" style="--d:7"><svg aria-hidden="true"><use href="#i-pin"/></svg> {{ P.start.linia_adresu | escape }}</p>
         </div>
@@ -242,7 +240,6 @@
           </svg>
         </div>
       </div>
-      <a href="#spacer" class="scroll-hint" aria-label="Przewiń do sekcji Na spacer"><span></span></a>
     </section>
 
     <!-- PASEK HASEŁ -->
@@ -258,9 +255,9 @@
     <section class="walker" id="spacer" aria-labelledby="walker-title">
       <div class="wrap walker-grid">
         <div class="walker-copy">
-          <p class="kicker" data-reveal>{{ P.spacer.nadtytul | escape }}</p>
+          <p class="kicker">{{ P.spacer.nadtytul | escape }}</p>
           <h2 id="walker-title" class="h2" data-split data-s="spacer_tytul">{{ S.spacer_tytul | escape }}</h2>
-          <p class="body" data-reveal data-s="spacer_wstep">{{ S.spacer_wstep | escape }}</p>
+          <p class="body" data-s="spacer_wstep">{{ S.spacer_wstep | escape }}</p>
 
           <ol class="steps">
             {%- for k in P.spacer.kroki %}
@@ -271,7 +268,7 @@
             {%- endfor %}
           </ol>
 
-          <div class="distance" data-reveal>
+          <div class="distance">
             <button class="btn btn-primary" type="button" data-locate><svg aria-hidden="true"><use href="#i-walk"/></svg> {{ P.spacer.przycisk_odleglosc | escape }}</button>
             <p class="distance-out" data-distance aria-live="polite">{{ P.spacer.notka_odleglosc | escape }}</p>
           </div>
@@ -297,16 +294,16 @@
     <section class="seasonal" id="sezon" aria-labelledby="seasonal-title">
       <div class="wrap">
         <header class="section-head">
-          <p class="kicker" data-reveal data-s="oferta_nadtytul">{{ S.oferta_nadtytul | escape }}</p>
+          <p class="kicker" data-s="oferta_nadtytul">{{ S.oferta_nadtytul | escape }}</p>
           <h2 id="seasonal-title" class="h2" data-split data-s="oferta_tytul">{{ S.oferta_tytul | escape }}</h2>
-          <p class="body" data-reveal data-s="oferta_wstep">{{ S.oferta_wstep | escape }}</p>
+          <p class="body" data-s="oferta_wstep">{{ S.oferta_wstep | escape }}</p>
         </header>
-        <div class="cards" data-highlights>
+        <div class="cards" data-highlights style="--rest:{{ S.karty | size | minus: 1 }}">
           {%- for k in S.karty %}
           <article class="card" data-reveal style="--i:{{ forloop.index0 }}">
             <div class="card-img">
               {% include img.html src=k.obraz alt=k.alt sizes="(max-width: 760px) 78vw, 380px" lazy=true %}
-              <span class="tag">{{ k.etykieta | escape }}</span>
+              {%- if k.etykieta %}<span class="tag">{{ k.etykieta | escape }}</span>{% endif %}
             </div>
             <div class="card-body"><h3>{{ k.tytul | escape }}</h3><p>{{ k.tekst | escape }}</p></div>
           </article>
@@ -320,7 +317,7 @@
     <section class="gallery" aria-labelledby="gallery-title">
       <div class="wrap gallery-head">
         <div>
-          <p class="kicker" data-reveal>{{ G.nadtytul | escape }}</p>
+          <p class="kicker">{{ G.nadtytul | escape }}</p>
           <h2 id="gallery-title" class="h2" data-reveal>{{ G.tytul | escape }}</h2>
         </div>
         <div class="gallery-nav" data-gallery-nav hidden>
@@ -329,7 +326,7 @@
           <button type="button" class="round-btn" data-gallery-next aria-label="Następne zdjęcia"><svg aria-hidden="true"><use href="#i-next"/></svg></button>
         </div>
       </div>
-      <ul class="gallery-track" data-gallery tabindex="0" aria-label="Zdjęcia z kawiarni – przewijana galeria">
+      <ul class="gallery-track" data-gallery tabindex="0" aria-label="Zdjęcia z kawiarni, przewijana galeria">
         {%- for z in G.zdjecia %}
         <li class="g-item{% if z.szerokie %} g-wide{% endif %}"><figure>
           <button type="button" class="g-open" data-lightbox aria-label="Powiększ zdjęcie: {{ z.podpis | default: z.alt | escape }}">
@@ -344,7 +341,7 @@
           <a href="{{ F.instagram }}" target="_blank" rel="noopener">
             <svg aria-hidden="true"><use href="#i-ig"/></svg>
             <span>@{{ F.instagram | split: 'instagram.com/' | last | remove: '/' }}</span>
-            <small>więcej zdjęć na Instagramie →</small>
+            <small>więcej zdjęć na Instagramie</small>
           </a>
         </li>
       </ul>
@@ -356,9 +353,9 @@
     <section class="menu" id="menu" aria-labelledby="menu-title">
       <div class="wrap">
         <header class="section-head">
-          <p class="kicker" data-reveal>{{ M.nadtytul | escape }}</p>
+          <p class="kicker">{{ M.nadtytul | escape }}</p>
           <h2 id="menu-title" class="h2" data-reveal>{{ M.tytul | escape }}</h2>
-          <p class="body" data-reveal>{{ M.wstep | escape }}</p>
+          <p class="body">{{ M.wstep | escape }}</p>
         </header>
 
         <div class="tabs" role="tablist" aria-label="Kategorie menu" data-tabs hidden></div>
@@ -402,11 +399,11 @@
           {% include img.html src=X.obraz alt=X.obraz_alt sizes="(max-width: 920px) 92vw, 540px" lazy=true %}
         </figure>
         <div>
-          <p class="kicker" data-reveal>{{ X.nadtytul | escape }}</p>
+          <p class="kicker">{{ X.nadtytul | escape }}</p>
           <h2 id="space-title" class="h2" data-reveal>{{ X.tytul | escape }}</h2>
           <ul class="ticks">
             {%- for p in X.punkty %}
-            <li data-reveal="left" style="--i:{{ forloop.index0 }}">{{ p | escape }}</li>
+            <li>{{ p | escape }}</li>
             {%- endfor %}
           </ul>
         </div>
@@ -418,18 +415,18 @@
     <section class="events" id="przyjecia" aria-labelledby="events-title">
       <div class="wrap events-grid">
         <div class="events-copy">
-          <p class="kicker" data-reveal>{{ E.nadtytul | escape }}</p>
+          <p class="kicker">{{ E.nadtytul | escape }}</p>
           <h2 id="events-title" class="h2" data-reveal>{{ E.tytul | escape }}</h2>
-          <p class="body" data-reveal>{{ E.wstep | escape }}</p>
-          <ul class="chips" data-reveal>
+          <p class="body">{{ E.wstep | escape }}</p>
+          <ul class="chips">
             {%- for r in E.rodzaje %}
             <li>{{ r | escape }}</li>
             {%- endfor %}
           </ul>
           {%- if E.tekst_dodatkowy %}
-          <p class="body" data-reveal>{{ E.tekst_dodatkowy | escape }}</p>
+          <p class="body">{{ E.tekst_dodatkowy | escape }}</p>
           {%- endif %}
-          <div class="cta-row" data-reveal>
+          <div class="cta-row">
             <a class="btn btn-primary" href="tel:{{ tel_link }}"><svg aria-hidden="true"><use href="#i-phone"/></svg> Zadzwoń: {{ F.telefon | escape }}</a>
             <a class="btn btn-ghost" href="mailto:{{ F.email }}?subject=Rezerwacja%20sali">{{ E.przycisk_mail | escape }}</a>
           </div>
@@ -455,12 +452,12 @@
     <section class="faq" id="pytania" aria-labelledby="faq-title">
       <div class="wrap faq-grid">
         <header class="section-head">
-          <p class="kicker" data-reveal>{{ Q.nadtytul | escape }}</p>
+          <p class="kicker">{{ Q.nadtytul | escape }}</p>
           <h2 id="faq-title" class="h2" data-reveal>{{ Q.tytul | escape }}</h2>
         </header>
         <div class="faq-list">
           {%- for q in Q.lista %}
-          <details data-reveal>
+          <details>
             <summary><h3>{{ q.pytanie | escape }}</h3></summary>
             {{ q.odpowiedz | markdownify }}
           </details>
@@ -475,21 +472,21 @@
       <svg class="sunrise" aria-hidden="true"><use href="#rays"/></svg>
       <div class="wrap visit-grid">
         <div class="visit-copy">
-          <p class="kicker" data-reveal>{{ K.nadtytul | escape }}</p>
+          <p class="kicker">{{ K.nadtytul | escape }}</p>
           <h2 id="visit-title" class="h2" data-reveal>{{ K.tytul | escape }}</h2>
           <dl class="facts">
-            <div data-reveal style="--i:0"><dt>Adres</dt><dd>{{ F.ulica | escape }}<br>{{ F.kod_pocztowy }} {{ F.miasto | escape }} ({{ F.dzielnica | escape }}){% if K.dopisek_adresu %}, {{ K.dopisek_adresu | escape }}{% endif %}</dd></div>
-            <div data-reveal style="--i:1"><dt>Otwarte</dt><dd>codziennie <span data-hours>{{ godziny }}</span><br><span class="status" data-open-status><i></i><span></span></span></dd></div>
-            <div data-reveal style="--i:2"><dt>Telefon</dt><dd><a class="tap" href="tel:{{ tel_link }}">{{ F.telefon | escape }}</a></dd></div>
-            <div data-reveal style="--i:3"><dt>E-mail</dt><dd><a class="tap" href="mailto:{{ F.email }}">{{ F.email | escape }}</a></dd></div>
+            <div><dt>Adres</dt><dd>{{ F.ulica | escape }}<br>{{ F.kod_pocztowy }} {{ F.miasto | escape }} ({{ F.dzielnica | escape }}){% if K.dopisek_adresu %}, {{ K.dopisek_adresu | escape }}{% endif %}</dd></div>
+            <div><dt>Otwarte</dt><dd>codziennie <span data-hours>{{ godziny }}</span><br><span class="status" data-open-status><i></i><span></span></span></dd></div>
+            <div><dt>Telefon</dt><dd><a class="tap" href="tel:{{ tel_link }}">{{ F.telefon | escape }}</a></dd></div>
+            <div><dt>E-mail</dt><dd><a class="tap" href="mailto:{{ F.email }}">{{ F.email | escape }}</a></dd></div>
           </dl>
-          <div class="cta-row" data-reveal>
+          <div class="cta-row">
             <a class="btn btn-primary" data-directions href="{{ trasa | escape }}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-walk"/></svg> {{ K.przycisk_trasa | escape }}</a>
             <a class="btn btn-ghost icon-only" href="{{ F.instagram }}" target="_blank" rel="noopener" aria-label="{{ F.nazwa | escape }} na Instagramie"><svg aria-hidden="true"><use href="#i-ig"/></svg></a>
             <a class="btn btn-ghost icon-only" href="{{ F.facebook }}" target="_blank" rel="noopener" aria-label="{{ F.nazwa | escape }} na Facebooku"><svg aria-hidden="true"><use href="#i-fb"/></svg></a>
           </div>
         </div>
-        <div class="map" data-reveal="scale" data-map data-map-query="{{ F.nazwa | append: ', ' | append: F.ulica | append: ', ' | append: F.miasto | escape }}">
+        <div class="map" data-map data-map-query="{{ F.nazwa | append: ', ' | append: F.ulica | append: ', ' | append: F.miasto | escape }}">
           {%- assign mapa_small = K.mapa | replace: '.webp', '-480.webp' %}
           <img src="{{ K.mapa | relative_url }}" srcset="{{ mapa_small | relative_url }} 480w, {{ K.mapa | relative_url }} 960w" sizes="(max-width: 920px) 92vw, 620px" width="960" height="720" loading="lazy" alt="{{ K.mapa_alt | escape }}">
           <div class="map-cta">
@@ -504,7 +501,7 @@
   <footer class="footer">
     <div class="wrap footer-inner">
       <svg class="logo logo-footer" viewBox="0 80 600 340" aria-hidden="true"><use href="#logo"/></svg>
-      <p class="footer-name"><strong>{{ F.nazwa | escape }}</strong> – <em>{{ F.haslo | escape }}</em> nad zalewem Zakrzówek</p>
+      <p class="footer-name"><strong>{{ F.nazwa | escape }}</strong>, <em>{{ F.haslo | escape }}</em> nad zalewem Zakrzówek</p>
       <address class="footer-contact">
         {{ F.ulica | escape }}, {{ F.kod_pocztowy }} {{ F.miasto | escape }} ({{ F.dzielnica | escape }}) · codziennie <span data-hours>{{ godziny }}</span><br>
         <a class="tap" href="tel:{{ tel_link }}">{{ F.telefon | escape }}</a> · <a class="tap" href="mailto:{{ F.email }}">{{ F.email | escape }}</a>
@@ -537,6 +534,6 @@
   </dialog>
 
   <script src="js/seasons.js?v={{ site.time | date: '%Y%m%d%H%M' }}" defer></script>
-  <script src="js/main.js?v=20261106" defer></script>
+  <script src="js/main.js?v=20261107" defer></script>
 </body>
 </html>

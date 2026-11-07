@@ -1,6 +1,5 @@
 nazwa: Zima
 kolor_motywu: "#1b242b"
-czasteczki: snow
 tytul1: Zima
 tytul2: w cieple
 tytul_kursywa: gorąca kawa z widokiem na zalew
@@ -19,7 +18,7 @@ spacer_obraz:
   alt: Dwie kawy na wynos w kubkach z logo Café Zakrzówek
 oferta_nadtytul: Oferta zimowa
 oferta_tytul: Zima u nas
-oferta_wstep: Ciepło, kawa i sala na spotkania – także w większym gronie.
+oferta_wstep: Ciepło, kawa i sala na spotkania, także w większym gronie.
 hasla:
   - gorąca kawa
   - napoje ciepłe
@@ -28,19 +27,17 @@ hasla:
   - zima nad Zakrzówkiem
   - na wynos
 karty:
-  - etykieta: na rozgrzanie
-    tytul: Kawy i napoje ciepłe
-    tekst: Cappuccino, matcha latte i coś słodkiego do tego – w środku albo na wynos.
+  - tytul: Kawy i napoje ciepłe
+    tekst: Cappuccino, matcha latte i coś słodkiego do tego. W środku albo na wynos.
     obraz: /assets/img/szachy-i-kawa-w-kawiarni-krakow.webp
     alt: Cappuccino i matcha latte na stoliku obok szachownicy
-  - etykieta: w większym gronie
-    tytul: Przyjęcia i imprezy firmowe
-    tekst: Duża, klimatyczna sala z pięknym widokiem. Zarezerwuj termin wcześniej.
+  - tytul: Przyjęcia i imprezy firmowe
+    tekst: Duża sala ze światełkami i oknami na zieleń wokół zalewu. Termin zarezerwuj z wyprzedzeniem.
     obraz: /assets/img/sala-na-przyjecia-cafe-zakrzowek-krakow.webp
     alt: Sala na przyjęcia w Café Zakrzówek z nakrytymi stołami
   - etykieta: na ciepło
     tytul: Croissanty wytrawne
-    tekst: Codziennie w witrynie – chętnie podgrzejemy.
+    tekst: Codziennie w witrynie, chętnie podgrzejemy.
     obraz: /assets/img/croissanty-wytrawne-cafe-zakrzowek.webp
     alt: Croissanty wytrawne z warzywami na drewnianej desce
 menu_sezonowe:
