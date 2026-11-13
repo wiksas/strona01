@@ -4,7 +4,7 @@
 
 backend:
   name: github
-  repo: wiksas/strona01
+  repo: wiksas/cafe-zakrzowek
   branch: main
   # Logowanie tokenem GitHub (przycisk „Sign In Using Access Token”) albo lokalnie („Work with Local Repository”).
   # Logowanie przyciskiem „Sign In with GitHub”: wdróż Sveltia CMS Authenticator, odkomentuj base_url
@@ -16,8 +16,8 @@ backend:
     uploadMedia: "CMS: nowe zdjęcie {{path}}"
     deleteMedia: "CMS: usunięte zdjęcie {{path}}"
 
-site_url: https://wiksas.github.io/strona01/
-display_url: https://wiksas.github.io/strona01/
+site_url: https://wiksas.github.io/cafe-zakrzowek/
+display_url: https://wiksas.github.io/cafe-zakrzowek/
 
 media_folder: assets/img
 public_folder: /assets/img

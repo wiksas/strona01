@@ -1,7 +1,7 @@
 # Café Zakrzówek ☼ – strona www
 
-Strona na GitHub Pages: https://wiksas.github.io/strona01/
-Panel treści (Sveltia CMS): https://wiksas.github.io/strona01/admin/
+Strona na GitHub Pages: https://wiksas.github.io/cafe-zakrzowek/
+Panel treści (Sveltia CMS): https://wiksas.github.io/cafe-zakrzowek/admin/
 
 Treści są w plikach `_data/*.yml`. GitHub Pages przy każdym commicie składa z nich gotowy HTML (Jekyll),
 więc cała treść jest w kodzie strony od razu – bez czekania na JavaScript (ważne dla Google).
@@ -11,7 +11,7 @@ więc cała treść jest w kodzie strony od razu – bez czekania na JavaScript 
 1. Wejdź na `/admin/`.
 2. Kliknij **Sign In Using Access Token**. Okno podpowie link do GitHuba z gotowymi uprawnieniami – wygeneruj token,
    wklej go i gotowe (token zostaje zapisany w tej przeglądarce). Potrzebne jest konto GitHub z prawem zapisu do repozytorium.
-   Token „fine-grained” musi mieć dostęp do repozytorium `wiksas/strona01` z uprawnieniem **Contents: Read and write**.
+   Token „fine-grained” musi mieć dostęp do repozytorium `wiksas/cafe-zakrzowek` z uprawnieniem **Contents: Read and write**.
 3. Edytuj i kliknij **Zapisz** – to commit na `main`. Strona przebudowuje się sama w ok. 1–3 minuty.
 
 Alternatywnie **Work with Local Repository** (Chrome/Edge) edytuje pliki w lokalnym folderze repozytorium – potem trzeba je samemu zacommitować.
@@ -63,19 +63,19 @@ Potrzebny Docker (ten sam obraz, którego używa GitHub Pages):
 ```
 docker run --rm -v "%cd%:/github/workspace" -w /github/workspace -e GITHUB_WORKSPACE=/github/workspace ^
   -e INPUT_SOURCE=. -e INPUT_DESTINATION=./_site -e INPUT_FUTURE=false -e INPUT_BUILD_REVISION=local ^
-  -e INPUT_VERBOSE=false -e INPUT_TOKEN= -e GITHUB_REPOSITORY=wiksas/strona01 ^
+  -e INPUT_VERBOSE=false -e INPUT_TOKEN= -e GITHUB_REPOSITORY=wiksas/cafe-zakrzowek ^
   ghcr.io/actions/jekyll-build-pages:v1.0.13
-mkdir _preview & xcopy /e /i /y _site _preview\strona01
+mkdir _preview & xcopy /e /i /y _site _preview\cafe-zakrzowek
 python -m http.server 8765 --directory _preview
 ```
 
-i otwórz http://127.0.0.1:8765/strona01/
+i otwórz http://127.0.0.1:8765/cafe-zakrzowek/
 
 ## Zmiana domeny
 
 Zmień `url` i `baseurl` w `_config.yml` (np. `url: "https://cafezakrzowek.pl"`, `baseurl: ""`) oraz `site_url`
 i `display_url` w `admin/config.yml`. Canonical, `og:*`, JSON-LD, `sitemap.xml`, `robots.txt` i strona 404 przeliczą się same.
-Ze starego adresu ustaw przekierowanie 301. `robots.txt` działa dopiero w katalogu głównym domeny – na `github.io/strona01/`
+Ze starego adresu ustaw przekierowanie 301. `robots.txt` działa dopiero w katalogu głównym domeny – na `github.io/cafe-zakrzowek/`
 sitemapę trzeba zgłosić ręcznie w Search Console.
 
 ## Do sprawdzenia z kawiarnią

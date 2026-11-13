@@ -1,7 +1,7 @@
 # Jekyll (GitHub Pages) – składa stronę z treści w _data/ edytowanych w Sveltia CMS (/admin/).
 # Przy zmianie domeny zmień url i baseurl (np. url: "https://cafezakrzowek.pl", baseurl: "").
 url: "https://wiksas.github.io"
-baseurl: "/strona01"
+baseurl: "/cafe-zakrzowek"
 lang: pl
 
 exclude:
